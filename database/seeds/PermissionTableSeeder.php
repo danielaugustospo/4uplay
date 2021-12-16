@@ -40,7 +40,12 @@ class PermissionTableSeeder extends Seeder
         //    'novo-criativo',
         //    'lista-criativo',
         //    'visualiza-criativo',
-        //    'exclui-criativo'
+        //    'exclui-criativo',
+
+        // 'pipeline-list',
+        // 'pipeline-create',
+        // 'pipeline-edit',
+        // 'pipeline-delete',
 
         ];
 
