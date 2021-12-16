@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/listapipeline', 'PipelineController@inicio')->name('listapipeline');
+Route::get('/criapipeline', 'PipelineController@cria')->name('criapipeline');
+Route::post('/atualizapipeline', 'PipelineController@atualiza')->name('atualizapipeline');
+Route::post('/excluipipeline', 'PipelineController@marcaComoExcluido')->name('excluipipeline');
+
