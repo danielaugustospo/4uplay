@@ -10,6 +10,8 @@ use App\User;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class UserController extends Controller
@@ -22,6 +24,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $data = User::orderBy('id','DESC')->paginate(5);
+
         return view('users.index',compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -148,4 +151,5 @@ class UserController extends Controller
         return redirect()->route('users.index')
                         ->with('success','Cadastro de usuário excluído com sucesso');
     }
+    
 }

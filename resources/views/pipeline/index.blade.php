@@ -215,6 +215,7 @@
                                         name: "edit",
                                         text: "Editar"
                                     },
+                                    @can('pipeline-delete')
                                     {
                                         name: "Excluir",
                                         click: function(e) {
@@ -255,6 +256,7 @@
                                             }
                                         }
                                     }
+                                    @endcan
                                 ],
                                 width: 120,
                                 exportable: false,
