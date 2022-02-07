@@ -17,6 +17,11 @@ class PermissionTableSeeder extends Seeder
         //    'role-create',
         //    'role-edit',
         //    'role-delete',
+
+        //    'usuarios-list',
+        //    'usuarios-create',
+        //    'usuarios-edit',
+        //    'usuarios-delete',
         
         //    'product-list',
         //    'product-create',
@@ -46,6 +51,31 @@ class PermissionTableSeeder extends Seeder
         // 'pipeline-create',
         // 'pipeline-edit',
         // 'pipeline-delete',
+        // 'pipeline-historico',
+
+        // 'criativo-list',
+        // 'criativo-create',
+        // 'criativo-edit',
+        // 'criativo-delete',
+        // 'criativo-historico',
+
+        // 'mensalidade-list',
+        // 'mensalidade-create',
+        // 'mensalidade-edit',
+        // 'mensalidade-delete',
+        // 'mensalidade-historico',
+
+        // 'totem-list',
+        // 'totem-create',
+        // 'totem-edit',
+        // 'totem-delete',
+        // 'totem-historico',
+
+        // 'clienteslicenciado-list',
+        // 'clienteslicenciado-create',
+        // 'clienteslicenciado-edit',
+        // 'clienteslicenciado-delete',
+        // 'clienteslicenciado-historico',
 
         ];
 

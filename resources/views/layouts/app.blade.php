@@ -17,8 +17,6 @@
     
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.default-main.min.css" />
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-
-    
     
     {{-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script> --}}
     
@@ -32,7 +30,23 @@
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/kendo-ui-core/2014.1.416/js/cultures/kendo.culture.pt-BR.min.js"></script> --}}
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.1/dist/sweetalert2.all.min.js" integrity="sha256-x7Yk56ZYq7Z6MPePNSTZQn42lokx3xDNDGLhwHUZa7M=" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" defer></script>
+    <script src="{{ asset('js/scripts/util.js') }}" defer></script>
 
+
+
+    <style>
+    td, span {
+        font-size: 13;
+    }
+
+    .k-grid-header .k-header>.k-link {
+        font-size: 13;
+    }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -58,16 +72,30 @@
                         <!-- Authentication Links -->
                         @guest
                             <li><a class="nav-link" href="{{ route('login') }}">{{ __('Área do Licenciado') }}</a></li>
-                            <li><a class="nav-link" href="{{ route('register') }}">{{ __('Cadastro') }}</a></li>
+                            {{-- <li><a class="nav-link" href="{{ route('register') }}">{{ __('Cadastro') }}</a></li> --}}
                         @else
-                            @can('lista-cadastro')
-                                <li><a class="nav-link" href="cadastro">Cadastro</a></li>
-                            @endcan
+
                             @can('lista-pipeline')
-                            <li><a class="nav-link" href="pipeline">Pipeline</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRelatorio" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Pipeline
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownRelatorio">
+                                @can('pipeline-list')
+                                    <a class="dropdown-item" href="{{ route('pipeline') }}">Consultar/Cadastrar</a>
+                                @endcan
+                                @can('pipeline-historico')
+                                    <a class="dropdown-item" href="{{ route('historicopipeline')}}">Histórico</a>
+                                @endcan
+                                </div>
+                            </li>
+
                             @endcan
                             @can('lista-criativo')
-                                <li><a class="nav-link" href="criativo">Criativo</a></li>
+                                <li><a class="nav-link" href="{{ route('criativo2') }}">Criativo</a></li>
+                            @endcan
+                            @can('mensalidade-list')
+                                <li><a class="nav-link" href="{{ route('mensalidade') }}">Mensalidade</a></li>
                             @endcan
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRelatorio" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -75,16 +103,22 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownRelatorio">
                                 @can('relatorio-financeiro')
-                                    <a class="dropdown-item" href="relfinanceiro">Financeiro</a>
+                                    <a class="dropdown-item" href="{{ route('financeiro2') }}">Financeiro</a>
                                 @endcan
                                 @can('relatorio-sintetico')
-                                    <a class="dropdown-item" href="relsintetico">Sintético</a>
+                                    <a class="dropdown-item" href="{{ route('sintetico2') }}">Sintético</a>
                                 @endcan
                                 </div>
                             </li>
                             @can('role-list')
                                 <li><a class="nav-link" href="{{ route('users.index') }}">Gerenciar Usuários</a></li>
                                 <li><a class="nav-link" href="{{ route('roles.index') }}">Permissões</a></li>
+                            @endcan
+                            @can('totem-list')
+                                <li><a class="nav-link" href="{{ route('totem') }}">Totens</a></li>
+                            @endcan
+                            @can('clienteslicenciado-list')
+                                <li><a class="nav-link" href="{{ route('clientelicenciado') }}">Clientes</a></li>
                             @endcan
                             @can('product-list')
                                 <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
@@ -96,6 +130,9 @@
 
 
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('cadastro2', 'id='.Auth::id()) }}">
+                                        Meus Dados
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -107,6 +144,7 @@
                                         @csrf
                                     </form>
                                 </div>
+
                             </li>
                         @endguest
                     </ul>

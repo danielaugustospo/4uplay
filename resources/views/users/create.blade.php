@@ -2,6 +2,10 @@
 
 
 @section('content')
+
+{{ Html::script('js/scripts/pega_estados_municipios.js') }}
+{{ Html::script('js/scripts/exibe_senha.js') }}
+
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
@@ -15,20 +19,35 @@
 
 
 @if (count($errors) > 0)
-  <div class="alert alert-danger">
+<div class="alert alert-danger">
     <strong>Atenção!</strong> Reconsidere os seguintes campos:<br><br>
     <ul>
-       @foreach ($errors->all() as $error)
-         <li>{{ $error }}</li>
-       @endforeach
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
     </ul>
-  </div>
+</div>
 @endif
 
 
 
 {!! Form::open(array('route' => 'users.store','method'=>'POST')) !!}
-<div class="row">
+
+<div class="container mt-3 p-5" style="background-color:#b0b0b0; ">
+    @include('cadastro/formulario')
+
+
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Permissões:</strong>
+            {!! Form::select('roles[]', $roles,[], array('class' => 'form-control','multiple')) !!}
+        </div>
+    </div>
+    
+    <button class="btn btn-primary" type="submit">Salvar</button>
+</div>
+
+{{-- <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Nome:</strong>
@@ -62,7 +81,7 @@
     <div class="col-xs-12 col-sm-12 col-md-12 text-center">
         <button type="submit" class="btn btn-primary">Salvar</button>
     </div>
-</div>
+</div> --}}
 {!! Form::close() !!}
 
 <p class="text-center text-primary"><small>Desenvolvido por danieltecnologia.com</small></p>
