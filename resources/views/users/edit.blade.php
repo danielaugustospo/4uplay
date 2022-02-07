@@ -27,7 +27,7 @@
 
 
 {!! Form::model($user, ['method' => 'PATCH','route' => ['users.update', $user->id]]) !!}
-<div class="row">
+{{-- <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Nome:</strong>
@@ -61,8 +61,27 @@
     <div class="col-xs-12 col-sm-12 col-md-12 text-center">
         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
     </div>
+</div> --}}
+
+
+@include('cadastro/formulario')
+@can('role-create')
+    
+<div class="col-xs-12 col-sm-12 col-md-12">
+    <div class="form-group">
+        <strong>Permissões:</strong>
+        {!! Form::select('roles[]', $roles,$userRole, array('class' => 'form-control','multiple')) !!}
+    </div>
 </div>
+@endcan
+
+<button type="submit" class="btn btn-primary">Salvar</button>
+
 {!! Form::close() !!}
+
+
+
 
 <p class="text-center text-primary"><small>Desenvolvido por danieltecnologia.com</small></p>
 @endsection
+

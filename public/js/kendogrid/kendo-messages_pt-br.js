@@ -120,12 +120,13 @@ kendo.ui.Validator.prototype.options.messages =
 
 /* VALIDATOR MESSAGES 
  ****************************************************************************/   
-  required: "{0} é obrigatório",
+  // required: "{0} é obrigatório",
+  required: "Campo obrigatório",
   pattern: "{0} não é válido",
   min: "{0} deve ser maior que ou igual a {1}",
   max: "{0} deve ser menor que ou igual a {1}",
   step: "{0} não é válido",
-  email: "{0} não é um email válido",
+  email: "Este email não é um email válido",
   url: "{0} não é uma URL válida",
   date: "{0} não é uma data válida"
  /***************************************************************************/   

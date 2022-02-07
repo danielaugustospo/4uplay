@@ -1,333 +1,367 @@
 @extends('layouts.app')
 @section('content')
-    <style>
+<?php
+$permissaocriacao = "pipeline-create";
+?>
+<style>
+    .critical {
+        color: rgb(236, 51, 51) !important;
+    }
 
-        .critical {
-            background-color: rgb(243, 128, 128) !important;
-        }
+    .warning {
+        color: rgb(240, 174, 75) !important;
+    }
 
-        .warning {
-            background-color: rgb(233, 194, 136) !important;
-        }
+    .ok {
+        color: rgb(115, 171, 197) !important;
+    }
+</style>
 
-        .ok {
-            background-color: rgb(217, 236, 245) !important;
-        }
 
-    </style>
-    
 @can('pipeline-list')
 
-    <div class="container mt-1 p-2" style="background-color:#b0b0b0; ">
-        <h2>Pipeline</h2>
 
-        <div id="example">
-            <div id="grid"></div>
+{{-- 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> --}}
 
-            <script>
-                function getUnitsInStockClass(units) {
-                    if (units == 'Quente') {
-                        return "critical";
-                    } else if (units == 'Morno') {
-                        return "warning";
-                    } else if (units == 'Frio') {
-                        return "ok";
-                    }
+
+
+<div class="container p-2" style="background-color:#b0b0b0; ">
+    <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b> Pipeline</b></h2>
+
+    <div id="example">
+        <div id="grid"></div>
+
+        <script>
+            function getUnitsInStockClass(units) {
+                if (units == 'Quente') {
+                    return "critical";
+                } else if (units == 'Morno') {
+                    return "warning";
+                } else if (units == 'Frio') {
+                    return "ok";
                 }
+            }
 
-                $(document).ready(function() {
-                    dataSource = new kendo.data.DataSource({
-                        transport: {
-                            read: {
-                                url: "{{ route('listapipeline') }}",
-                                dataType: "json"
-                            },
-                            update: {
-                                url: "{{ route('atualizapipeline') }}",
-                                dataType: "json",
-                                type: "post"
-                            },
-                            destroy: {
-                                url: "{{ route('excluipipeline') }}",
-                                dataType: "json"
-                            },
+            $(document).ready(function() {
+                dataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: "{{ route('listapipeline') }}?acesso="
+                            <?php if (Auth::user()->id) : echo '+ ' . Auth::user()->id;
+                            endif; ?>,
+                            dataType: "json",
+                            // headers: { 'Authorization': 'Bearer {{ $_COOKIE['gerenciamento_4uplay_session'] }}' },
+                        },
+                        update: {
+                            url: "{{ route('atualizapipeline') }}?acesso="
+                            <?php if (Auth::user()->id) : echo '+ ' . Auth::user()->id;
+                            endif; ?>,
+                            dataType: "json",
+                            // type: "post",
+                        },
+                        destroy: {
+                            url: "{{ route('excluipipeline') }}?acesso="
+                            <?php if (Auth::user()->id) : echo '+ ' . Auth::user()->id;
+                            endif; ?>,
+                            dataType: "json",
+                        },
+                        create: {
+                            url: "{{ route('criapipeline') }}?acesso="
+                            <?php if (Auth::user()->id) : echo '+ ' . Auth::user()->id;
+                            endif; ?>,
+                            dataType: "json",
+                        },
+                        parameterMap: function(options, operation) {
+                            if (operation !== "read" && options.models) {
 
-                            create: {
-                                url: "{{ route('criapipeline') }}",
-                                dataType: "json"
-                            },
-                            parameterMap: function(options, operation) {
-                                if (operation !== "read" && options.models) {
-                                    return {
-                                        models: kendo.stringify(options.models)
-                                    };
+                                if (operation == "create" || operation == "update") {
+                                    if (operation == "create") {
+                                        var titulo = 'Pipeline incluída!';
+                                    }
+                                    if (operation == "update") {
+                                        var titulo = 'Pipeline atualizada!';
+                                    }
+                                    Swal.fire(
+                                        titulo,
+                                        'Cliente: ' + options.models[0].cliente +
+                                        ', Qualificação: ' + options.models[0].qualificacao +
+                                        ', Proposta: R$' + options.models[0].proposta +
+                                        ', Negociação: ' + options.models[0].negociacao +
+                                        ', Fechamento: ' + options.models[0].fechamento,
+                                        'success'
+                                    );
+                                }
+
+                                return {
+                                    models: kendo.stringify(options.models)
+                                };
+                            }
+                        }
+                    },
+                    batch: true,
+                    pageSize: 20,
+                    schema: {
+                        model: {
+                            id: "id",
+                            fields: {
+                                // id: {
+                                //     editable: false,
+                                //     nullable: true,
+                                //     type: "string"
+
+                                // },
+                                cliente: {
+                                    validation: {
+                                        required: true
+                                    }
+                                },
+                                qualificacao: {
+                                    type: "string"
+                                },
+                                proposta: {
+                                    type: "number",
+                                    validation: {
+                                        required: true,
+                                        min: 0.01
+                                    }
+                                },
+                                @can('pipeline-delete')
+                                licenciado: {
+                                    type: "string",
+                                    editable: false
+                                },
+                                @endcan
+                                fechamento: {
+                                    type: "number",
+                                    validation: {
+                                        required: true,
+                                        min: 0.01
+                                    }
+                                },
+                                negociacao: {
+                                    type: "string",
+                                    validation: {
+                                        required: true
+                                    }
+                                },
+                                created_at: {
+                                    type: "date",
+                                    editable: false
+                                },
+                            }
+                        }
+                    },
+
+                });
+
+                @can('pipeline-create')
+                @include('layouts/customizacoestabela', ['permissaocriacao' => '1'])
+                @else
+                @include('layouts/customizacoestabela', ['permissaocriacao' => '0'])
+                @endcan
+
+                    columns: [{
+                            title: "Cliente",
+                            field: "cliente",
+                            filterable: true,
+                            width: "100px",
+                            editor: listaClientes
+
+                        },
+                        {
+                            field: "qualificacao",
+                            title: "Qualificação",
+                            // filterable: {
+                            //     cell: { template: qualificacaoFilter }
+                            // },
+                            width: "100px",
+                            editor: categoryDropDownEditor
+                        },
+                        {
+                            field: "proposta",
+                            title: "Proposta",
+                            format: "{0:n}",
+                            filterable: true,
+                            width: "100px"
+                        },
+                        @can('pipeline-delete') {
+                            field: "licenciado",
+                            title: "Licenciado",
+                            filterable: true,
+                            width: "120px",
+                        },
+                        @endcan {
+                            field: "negociacao",
+                            title: "Status Negociação",
+                            filterable: true,
+                            width: "100px"
+                        },
+                        {
+                            field: "fechamento",
+                            title: "Valor Fechamento",
+                            format: "{0:n}",
+                            filterable: true,
+                            width: "100px"
+                        },
+                        {
+                            field: "created_at",
+                            title: "Data Criação",
+                            width: "160px",
+                            format: "{0:dd/MM/yyyy}",
+                            filterable: {
+                                cell: {
+                                    template: betweenFilter
                                 }
                             }
                         },
-                        batch: true,
-                        pageSize: 20,
-                        schema: {
-                            model: {
-                                id: "id",
-                                fields: {
-                                    id: {
-                                        editable: false,
-                                        nullable: true
-                                    },
-                                    cliente: {
-                                        validation: {
-                                            required: true
-                                        }
-                                    },
-                                    qualificacao: {
-                                        type: "string"
-                                    },
-                                    proposta: {
-                                        type: "number",
-                                        validation: {
-                                            required: true,
-                                            min: 1
-                                        }
-                                    },
-                                    fechamento: {
-                                        type: "string"
-                                    },
-                                    negociacao: {
-                                        type: "string"
-                                    },
-                                    created_at: {
-                                        type: "date",
-                                        editable: false
-                                    },
-                                }
-                            }
-                        },
 
-                    });
+                        {
+                            command: [{
+                                    name: "edit",
+                                    text: "Editar"
+                                },
+                                @can('pipeline-delete') {
+                                    name: "Excluir",
+                                    click: function(e) {
+                                        e.preventDefault();
+                                        var tr = $(e.target).closest(
+                                            "tr"); // get the current table row (tr)
+                                        var data = this.dataItem(tr);
+                                        // window.location.href = location.href + '/' + data.id;
 
-                    $("#grid").kendoGrid({
-                        toolbar: [{
-                            name: "create",
-                            text: "Novo"
-                        }, {
-                            name: "excel",
-                            text: "Excel"
-                        }, {
-                            name: "pdf",
-                            text: "PDF"
-                        }],
-
-                        excel: {
-                            fileName: "Relatório de " + document.title + ".xlsx",
-
-                        },
-                        excelExport: function(e) {
-
-                            var sheet = e.workbook.sheets[0];
-                            sheet.frozenRows = 1;
-                            sheet.mergedCells = ["A1:H1"];
-                            sheet.name = "Relatorio de " + document.title + " -  4UPLAY";
-
-                            var myHeaders = [{
-                                value: "Relatório de " + document.title,
-                                textAlign: "center",
-                                background: "black",
-                                color: "#ffffff"
-                            }];
-
-                            sheet.rows.splice(0, 0, {
-                                cells: myHeaders,
-                                type: "header",
-                                height: 70
-                            });
-                        },
-
-                        pdf: {
-                            fileName: "Relatório de " + document.title + ".pdf",
-
-                            allPages: true,
-                            avoidLinks: true,
-                            paperSize: "A4",
-                            margin: {
-                                top: "2cm",
-                                left: "1cm",
-                                right: "1cm",
-                                bottom: "1cm"
-                            },
-                            landscape: true,
-                            repeatHeaders: true,
-                            template: $("#page-template").html(),
-                            scale: 0.8
-                        },
-
-
-                        dataSource: dataSource,
-                        pageable: true,
-                        filterable: true,
-                        sortable: true,
-                        resizable: true,
-                        // responsible: true,
-                        pageable: {
-                            pageSizes: [5, 10, 15, 20, 50, 100, 200, "Todos"],
-                            numeric: false
-                        },
-                        columns: [{
-                                field: "cliente",
-                                title: "Cliente",
-                                filterable: true,
-                                width: "100px"
-                            },
-                            {
-                                field: "qualificacao",
-                                title: "Qualificação",
-                                filterable: true,
-                                width: "100px",
-                                editor: categoryDropDownEditor
-                            },
-                            {
-                                field: "proposta",
-                                title: "Proposta",
-                                format: "{0:c}",
-                                filterable: true,
-                                width: "100px"
-                            },
-                            {
-                                field: "negociacao",
-                                title: "Negociação",
-                                filterable: true,
-                                width: "100px"
-                            },
-                            {
-                                field: "fechamento",
-                                title: "Fechamento",
-                                filterable: true,
-                                width: "100px"
-                            },
-                            {
-                                field: "created_at",
-                                title: "Data Criação",
-                                width: "120px",
-                                format: "{0:dd/MM/yyyy}"
-                            },
-
-                            {
-                                command: [{
-                                        name: "edit",
-                                        text: "Editar"
-                                    },
-                                    @can('pipeline-delete')
-                                    {
-                                        name: "Excluir",
-                                        click: function(e) {
-                                            e.preventDefault();
-                                            var tr = $(e.target).closest(
-                                                "tr"); // get the current table row (tr)
-                                            var data = this.dataItem(tr);
-                                            // window.location.href = location.href + '/' + data.id;
-
-                                            if (window.confirm(
-                                                    "Tem certeza que deseja realizar esta operação?")) {
+                                        Swal.fire({
+                                            title: 'Tem certeza que deseja remover esta pipeline?',
+                                            text: "Esta ação não poderá ser revertida!",
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#3085d6',
+                                            cancelButtonColor: '#d33',
+                                            cancelButtonText: 'Cancelar',
+                                            confirmButtonText: 'Sim, desejo excluir!'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
 
                                                 var http = new XMLHttpRequest();
                                                 var url = "{{ route('excluipipeline') }}";
-                                                var params = 'id=' + data.id + '&cliente=' + data
-                                                    .cliente;
+                                                var params = 'id=' + data.id + '&cliente=' + data.cliente + "&acesso=" + <?php if (Auth::user()->id) : echo Auth::user()->id;
+                                                                                                                            endif; ?>;
+
                                                 http.open('POST', url, true);
 
                                                 //Send the proper header information along with the request
                                                 http.setRequestHeader('Content-type',
                                                     'application/x-www-form-urlencoded');
-
+                                                var contador = 0;
                                                 http.onreadystatechange =
                                                     function() { //Call a function when the state changes.
-                                                        if (http.readyState != 4 && http.status !=
-                                                            200) {
-                                                            alert(
-                                                                "Ocorreu um erro ao executar o procedimento"
-                                                            );
+                                                        if (http.readyState != 4 && http.status != 200) {
+                                                            while (contador < 1) {
+                                                                Swal.fire(
+                                                                    'Não foi possível processar a sua solicitação',
+                                                                    'Ocorreu um erro ao executar o procedimento',
+                                                                    'error');
+                                                                contador++;
+                                                            }
                                                         } else {
                                                             recarrega();
+                                                            while (contador < 1) {
+                                                                Swal.fire(
+                                                                    'Pipeline removida!',
+                                                                    'É possível ver esta ação no menu Pipeline -> Histórico.',
+                                                                    'success');
+                                                                contador++;
+                                                            }
                                                         }
                                                     }
                                                 http.send(params);
-
                                             } else {
                                                 recarrega();
                                             }
-                                        }
+                                        })
                                     }
-                                    @endcan
-                                ],
-                                width: 120,
-                                exportable: false,
-                                title: "Ações",
-                            },
-
-                        ],
-                        dataBound: function(e) {
-                            // get the index of the UnitsInStock cell
-                            var columns = e.sender.columns;
-                            var columnIndex = this.wrapper.find(".k-grid-header [data-field=" + "qualificacao" +
-                                "]").index();
-
-                            // iterate the table rows and apply custom cell styling
-                            var rows = e.sender.tbody.children();
-                            for (var j = 0; j < rows.length; j++) {
-                                var row = $(rows[j]);
-                                var dataItem = e.sender.dataItem(row);
-                                var units = dataItem.get("qualificacao");
-
-                                var cell = row.children().eq(columnIndex);
-                                $(rows[j]).addClass(getUnitsInStockClass(units));
-                            }
+                                }
+                                @endcan
+                            ],
+                            width: 150,
+                            exportable: false,
+                            title: "Ações",
                         },
-                        editable: "inline"
-                    });
 
+                    ],
+                    
 
+                    dataBound: function(e) {
+                        // get the index of the UnitsInStock cell
+                        var columns = e.sender.columns;
+                        var columnIndex = this.wrapper.find(".k-grid-header [data-field=" + "qualificacao" +
+                            "]").index();
 
-                    function recarrega() {
-                        $('#grid').data('kendoGrid').dataSource.read();
-                        $('#grid').data('kendoGrid').refresh();
-                    }
+                        // iterate the table rows and apply custom cell styling
+                        var rows = e.sender.tbody.children();
+                        for (var j = 0; j < rows.length; j++) {
+                            var row = $(rows[j]);
+                            var dataItem = e.sender.dataItem(row);
+                            var units = dataItem.get("qualificacao");
+
+                            var cell = row.children().eq(columnIndex);
+                            // $(rows[j]).addClass(getUnitsInStockClass(units));
+                            $(cell).addClass(getUnitsInStockClass(units));
+                        }
+                        $(".critical").append($('<i class="pl-2 fas fa-fire"></i>'));
+                        $(".warning").append($('<i class="pl-2 fas fa-mug-hot"></i>'));
+                        $(".ok").append($('<i class="pl-2 fas fa-snowflake"></i>'));
+                    },
+                    editable: "inline"
                 });
 
 
-                function categoryDropDownEditor(container, options) {
 
-                    var data = [{
-                            text: "Quente",
-                            value: 'Quente'
-                        },
-                        {
-                            text: "Morno",
-                            value: 'Morno'
-                        },
-                        {
-                            text: "Frio",
-                            value: 'Frio'
-                        },
-
-                    ];
-
-                    $('<input required name="' + options.field + '"/>')
-                        .appendTo(container)
-                        .kendoDropDownList({
-                            dataSource: data,
-                            dataTextField: "text",
-                            dataValueField: "value"
-                        });
+                function recarrega() {
+                    $('#grid').data('kendoGrid').dataSource.read();
+                    $('#grid').data('kendoGrid').refresh();
                 }
+            });
 
-                // function customBoolEditor(container, options) {
-                //     $('<input class="k-checkbox" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container);
-                // }
-            </script>
-        </div>
+
+            function categoryDropDownEditor(container, options) {
+
+                var data = [{
+                        text: "Quente",
+                        value: 'Quente'
+                    },
+                    {
+                        text: "Morno",
+                        value: 'Morno'
+                    },
+                    {
+                        text: "Frio",
+                        value: 'Frio'
+                    },
+
+                ];
+
+                $('<input required name="' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoDropDownList({
+                        dataSource: data,
+                        dataTextField: "text",
+                        dataValueField: "value"
+                    });
+            }
+
+        @include('layouts/combolicenciado_clientes')
+        @include('layouts/filtradata')
+
+        </script>
     </div>
-      
+</div>
+
 @elsecan('pipeline-list')
-        <h1>Acesso Não Autorizado</h1>
+<h1>Acesso Não Autorizado</h1>
 @endcan
 
 

@@ -1,8 +1,11 @@
-## user roles and permissions (acl) using spatie tutorial laravel 5.8
+## Sistema de Gerenciamento de Prospostas - 4UPLAY - Laravel v5.8
+Usado com base no https://itsolutionstuff.com/post/laravel-58-user-roles-and-permissions-tutorialexample.html
 
-![Acl in Laravel 5.8](https://itsolutionstuff.com/upload/acl-in-laravel-5-8.png)
-![Acl in Laravel 5.8](https://itsolutionstuff.com/upload/laravel-5-8-acl.png)
-![Acl in Laravel 5.8](https://itsolutionstuff.com/upload/laravel-5-8-acl-2.png)
-![Acl in Laravel 5.8](https://itsolutionstuff.com/upload/laravel-5-8-acl-3.png)
+Colocando em modo de manutenção:
+ php artisan down --allow=127.0.0.1 --allow=meu_ip_externo --message="Em Manutenção"
+Subir novamente:
+ php artisan up
 
-You can follow step by step tutorial for user roles and permissions (acl) using spatie tutorial laravel 5.8 Here: https://itsolutionstuff.com/post/laravel-58-user-roles-and-permissions-tutorialexample.html
+php artisan db:seed --class=IntegradorSeeder
+<!-- php artisan db:seed --class=PermissionTableSeeder
+php artisan db:seed --class=CreateAdminUserSeeder -->
