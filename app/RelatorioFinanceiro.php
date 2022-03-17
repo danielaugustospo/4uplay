@@ -15,40 +15,46 @@ class RelatorioFinanceiro extends Model
         'name', 'detail'
     ];
 
-    public function consultaRelatorioFinanceiro()
+    public function consultaRelatorioFinanceiro($dtinicial, $dtfinal)
     {   
 
-        $stringQuery = "SELECT 	u.name, 
-		criacao.datacriativo, 
-		mensalidade.valor mensalidade, 
-		SUM(criacao.valtotal) as valorcriativo,  
-		SUM(criacao.valcriativo) as valcriativonovo,
-		criacao.datacriativo, 
-		-- criacao.created_at,
-		
-        (mensalidade.valor * 100) / criacao.valtotal as royalties,
-        SUM((p.fechamento) * 0.04) as fechamento
-                
-        
-        from 
-        
-        (SELECT m.ano ano, m.valor from mensalidade m) as mensalidade,
-        (select idlicenciado, valtotal, 
-        (valtotal * 0.7) as valcriativo , 
-        created_at, DATE_FORMAT(created_at, '%m-%Y') as datacriativo from criativo) as criacao
-        left join users u on criacao.idlicenciado = u.id 
-        left join pipeline p on  criacao.idlicenciado = p.idautor
+    $stringQuery = "SELECT 
+    u.id, 
+    u.name, 
+    (mensalidade.valor * contatotens.qtd) mensalidade, 
+    (dadospipeline.valtotal * 0.04) as royalties, 
+    (criacao.valtotal * 0.7) as valorcriativo,  
+    criacao.datacriativo,
+    contatotens.h_dtassociado 
+            
+    FROM 
+    users u
+    
+       LEFT JOIN (SELECT h_idtotem, h_idcliente, COUNT(DISTINCT h_idtotem ) qtd, h_dtassociado
+     			FROM historico_totemcliente 
+     			WHERE (h_dtassociado BETWEEN '$dtinicial' AND '$dtfinal')
+     			GROUP BY h_idcliente) AS contatotens on u.id = contatotens.h_idcliente			
+     		
+    
+     LEFT JOIN (SELECT  idlicenciado, SUM(valtotal) as valtotal, DATE_FORMAT(criativo.datacriacao, '%m-%Y') as datacriativo
+     			FROM criativo
+     			WHERE (criativo.datacriacao BETWEEN '$dtinicial' AND '$dtfinal')  and (excluidocriativo = 0)  GROUP BY idlicenciado) as criacao on u.id = criacao.idlicenciado
+     			
+     
+     LEFT JOIN (SELECT COUNT(cliente) as qtdeclientesfechados, cliente, idautor as idlicenciado, SUM(fechamento) as valtotal, pipeline.datainicial 
+     			FROM pipeline
+     			WHERE (pipeline.datainicial BETWEEN '$dtinicial' AND '$dtfinal') and (excluidopipeline = 0) GROUP BY idlicenciado) AS dadospipeline on u.id = dadospipeline.idlicenciado,
+     			(SELECT m.ano ano, m.valor from mensalidade m) as mensalidade
 
-        
-        
-        where 
-        criacao.datacriativo   	like CONCAT('%', mensalidade.ano)
-        and p.created_at   		like CONCAT(mensalidade.ano , '%')
-             
- 		group by u.name, datacriativo 
-        ";
+     WHERE 
+		contatotens.h_dtassociado  like CONCAT(mensalidade.ano , '%')
 
-        return $stringQuery;
+	GROUP BY u.id, u.name, datacriativo";
+
+// var_dump($stringQuery);
+// exit;
+
+     return $stringQuery;
     }
 
 }

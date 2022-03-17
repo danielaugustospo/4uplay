@@ -264,7 +264,7 @@ $permissaocriacao = "totem-create";
 
 
 
-            @include('layouts/combolicenciado_clientes')
+            @include('layouts/combos')
             @include('layouts/filtradata')
 
         </script>

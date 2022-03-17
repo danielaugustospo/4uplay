@@ -26,6 +26,7 @@ class ClienteLicenciado extends Model
         'id',
         'c_idlicenciado',
         'c_nome',
+        'c_cnpj',
         'c_email',
         'c_endereco',
         'c_telefone',
@@ -37,13 +38,14 @@ class ClienteLicenciado extends Model
 
     public function consultaClienteLicenciado($permiteListagemCompleta, $id)
     {   
-        if($id){
-            $complemento = "and c_idlicenciado = " .$id;
-        }
         if($permiteListagemCompleta == 1){
             $complemento = "";
         }
-        $stringQuery = "SELECT  *  from clienteslicenciado   where c_excluido = 0 ". $complemento;
+        else{
+            $complemento = " and c.c_idlicenciado = " .$id;
+        }
+        $stringQuery = "SELECT  c.*, u.name  from clienteslicenciado c, users u   
+            where c.c_excluido = 0 and u.id = c_idlicenciado ". $complemento;
 
         return $stringQuery;
     }

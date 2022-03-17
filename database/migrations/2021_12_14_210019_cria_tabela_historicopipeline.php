@@ -17,6 +17,7 @@ class CriaTabelaHistoricopipeline extends Migration
             $table->bigIncrements('id');
             $table->string('h_idpipeline')->nullable();
             $table->string('h_cliente')->nullable();
+            $table->string('h_idtotem')->nullable();
             $table->string('h_qualificacao')->nullable();
             $table->string('h_proposta')->nullable();
             $table->string('h_negociacao')->nullable();
@@ -25,6 +26,8 @@ class CriaTabelaHistoricopipeline extends Migration
             $table->string('h_dt_proposta')->nullable();
             $table->string('h_dtoperacao')->nullable();
             $table->string('h_id_ult_alterador')->nullable();
+            $table->string('datainicial')->nullable();
+            $table->string('datafinal')->nullable();
             $table->timestamps();
         });
     

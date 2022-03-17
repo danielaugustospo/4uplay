@@ -2,6 +2,7 @@
 @section('content')
 <?php
 $permissaocriacao = "criativo-create";
+$dataUm = "datacriacao";
 ?>
 <style>
     .critical {
@@ -89,7 +90,7 @@ $permissaocriacao = "criativo-create";
                                         ', Criativo: ' + options.models[0].tipocriativo +
                                         ', Quantidade: ' + options.models[0].quantidade +
                                         ', Val Unit: R$' + options.models[0].valunit +
-                                        ', Val Total: R$' + options.models[0].valtotal,
+                                        ', Val Total: R$' + options.models[0].valunit * options.models[0].quantidade,
                                         'success'
                                     );
                                 }
@@ -121,9 +122,10 @@ $permissaocriacao = "criativo-create";
                                     type: "string"
                                 },
                                 quantidade: {
-                                    type: "string",
+                                    type: "number",
                                     validation: {
-                                        required: true
+                                        required: true,
+                                        min: 1
                                     }
                                 },
                                 valunit: {
@@ -135,10 +137,11 @@ $permissaocriacao = "criativo-create";
                                 },
                                 valtotal: {
                                     type: "number",
-                                    validation: {
-                                        required: true,
-                                        min: 1
-                                    }
+                                    editable: false,
+                                    // validation: {
+                                    //     required: true,
+                                    //     min: 1
+                                    // }
                                 },
                                 @can('criativo-delete')
                                 licenciado: {
@@ -152,10 +155,14 @@ $permissaocriacao = "criativo-create";
                                 //         required: true
                                 //     }
                                 // },
-                                created_at: {
+                                datacriacao: {
                                     type: "date",
-                                    editable: false
+                                    editable: true
                                 },
+                                // created_at: {
+                                //     type: "date",
+                                //     editable: false
+                                // },
                             }
                         }
                     },
@@ -167,20 +174,29 @@ $permissaocriacao = "criativo-create";
                 @else
                 @include('layouts/customizacoestabela', ['permissaocriacao' => '0'])
                 @endcan
-                    columns: [{
+                    columns: [
+                        @can('criativo-delete') {
+                            field: "licenciado",
+                            title: "Licenciado",
+                            filterable: true,
+                            width: "100px",
+                        },
+                        @endcan
+                        {
                             title: "Cliente",
                             field: "cliente",
                             filterable: true,
                             width: "100px",
                             editor: listaClientes
-
+                            
                         },
                         {
-                            field: "tipocriativo",
-                            title: "Criativo",
+                            field: "idtotem",
+                            title: "Totem",
                             filterable: true,
                             width: "100px",
-                            editor: categoryDropDownEditor
+                            editor: listaTotem
+
                         },
                         {
                             field: "quantidade",
@@ -200,15 +216,10 @@ $permissaocriacao = "criativo-create";
                             title: "Val Total",
                             format: "{0:c}",
                             filterable: true,
-                            width: "100px"
-                        },
-                        @can('criativo-delete') {
-                            field: "licenciado",
-                            title: "Licenciado",
-                            filterable: true,
                             width: "100px",
+                           
                         },
-                        @endcan
+
                         // {
                         //     field: "fechamento",
                         //         title: "Fechamento",
@@ -216,7 +227,7 @@ $permissaocriacao = "criativo-create";
                         //                 width: "100px"
                         // },
                         {
-                            field: "created_at",
+                            field: "datacriacao",
                             title: "Data Criação",
                             width: "160px",
                             format: "{0:dd/MM/yyyy}",
@@ -226,6 +237,17 @@ $permissaocriacao = "criativo-create";
                                 }
                             }
                         },
+                        // {
+                        //     field: "created_at",
+                        //     title: "Data Criação",
+                        //     width: "160px",
+                        //     format: "{0:dd/MM/yyyy}",
+                        //     filterable: {
+                        //         cell: {
+                        //             template: betweenFilter
+                        //         }
+                        //     }
+                        // },
 
                         {
                             command: [{
@@ -255,7 +277,7 @@ $permissaocriacao = "criativo-create";
 
                                                 var http = new XMLHttpRequest();
                                                 var url = "{{ route('excluicriativo') }}";
-                                                var params = 'id=' + data.id + '&cliente=' + data.cliente + "&acesso=" + <?php if (Auth::user()->id) : echo Auth::user()->id; endif; ?> ;
+                                                var params = 'id=' + data.id + '&cliente=' + data.cliente + "&acesso=" + <?php if (Auth::user()->id) : echo Auth::user()->id; endif; ?> + '&totem=' + data.idtotem;
 
                                                 http.open('POST', url, true);
 
@@ -325,6 +347,7 @@ $permissaocriacao = "criativo-create";
 
 
 
+
                 function recarrega() {
                     $('#grid').data('kendoGrid').dataSource.read();
                     $('#grid').data('kendoGrid').refresh();
@@ -352,11 +375,11 @@ $permissaocriacao = "criativo-create";
                         dataTextField: "text",
                         dataValueField: "value"
                     });
-            }
+                    
+                }
 
-            @include('layouts/combolicenciado_clientes')
-            @include('layouts/filtradata')
-
+                @include('layouts/combos')
+                @include('layouts/filtradatadefault')    
 
             // function customBoolEditor(container, options) {
             //     $('<input class="k-checkbox" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container);

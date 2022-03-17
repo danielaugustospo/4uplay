@@ -115,8 +115,17 @@ class Totem extends Model
             (id, h_idcliente, h_idtotem, h_totemassociado, h_dtassociado, h_excluidototem, updated_at)
             VALUES(NULL, '" . $idlicenciado  . "', '" . $dadosrequisicao->n_serie . "', '" . $nomecliente . "', '" . $dadosrequisicao->dtassociado . "',   '". $tipooperacao ."',  '" . $dataoperacao . "')";
         }
-        // var_dump($stringQuery);
-        // exit;
+        if (($tipo == 4) || ($tipo == 5) ) {
+
+            if ($tipo == 4) : $tipooperacao = 'Desassociado'; endif;
+            if ($tipo == 5) : $tipooperacao = 'Associado'; endif;
+            $dataoperacao = date('Y-m-d');
+
+            $stringQuery = "INSERT INTO historico_totemcliente
+            (id, h_idcliente, h_idtotem, h_totemassociado, h_dtassociado, h_excluidototem, updated_at)
+            VALUES(NULL, '" . $idlicenciado  . "', '" . $dadosrequisicao[0]->n_serie . "', '" . $nomecliente . "', '" . $dadosrequisicao[0]->dtassociado . "',   '". $tipooperacao ."',  '" . $dataoperacao . "')";
+        }
+
         return $stringQuery;
     }
 }

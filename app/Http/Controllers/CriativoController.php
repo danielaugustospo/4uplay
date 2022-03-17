@@ -11,6 +11,7 @@ use App\Providers\AppServiceProvider;
 
 
 use App\User;
+use App\Totem;
 use Spatie\Permission\Models\Role;
 use App\Providers\FormatacoesServiceProvider;
 use App\ClienteLicenciado;
@@ -52,7 +53,7 @@ class CriativoController extends Controller
         $permiteListagemCompleta = 0;
         if(!empty($user->getRoleNames())){
                 foreach($user->getRoleNames() as $v){
-                    if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
+                    if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
                         $permiteListagemCompleta = 1;
                     }
                 }
@@ -84,7 +85,7 @@ class CriativoController extends Controller
         $permiteListagemCompleta = 0;
         if(!empty($user->getRoleNames())){
                 foreach($user->getRoleNames() as $v){
-                    if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
+                    if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
                         $permiteListagemCompleta = 1;
                     }
                 }
@@ -115,15 +116,24 @@ class CriativoController extends Controller
         settype($idlicenciado, "string");
 
 
+
+        $idTotem = $dadosrequisicao[0]->idtotem->id;
+
+        $dadostotem = Totem::find($idTotem);
+        $nSerieTotem = $dadostotem["n_serie"];
+        $dadosrequisicao[0]->nSerieTotem = $nSerieTotem;
+
         DB::beginTransaction();
         $dadoscliente = ClienteLicenciado::find($dadosrequisicao[0]->cliente);
-
+        $dadosrequisicao[0]->valtotal = $dadosrequisicao[0]->quantidade * $dadosrequisicao[0]->valunit;
         $criativoatualizado = Criativo::create([
             'cliente'           => $dadosrequisicao[0]->cliente,
             'tipocriativo'      => $dadosrequisicao[0]->tipocriativo,
             'quantidade'        => $dadosrequisicao[0]->quantidade,
             'valunit'           => $dadosrequisicao[0]->valunit,
             'valtotal'          => $dadosrequisicao[0]->valtotal,
+            'idtotem'           => $idTotem,
+            'datacriacao'       => $dadosrequisicao[0]->datacriacao,
             'idlicenciado'      => $idlicenciado,
             'id_ult_alterador'  => $idlicenciado,
             'excluidocriativo'  => '0',
@@ -151,6 +161,8 @@ class CriativoController extends Controller
             'valunit'           => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->valunit),
             'valtotal'          => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->valtotal),
             'idlicenciado'      => $idlicenciado,
+            'idtotem'           => $nSerieTotem,
+            'datacriacao'       => $dadosrequisicao[0]->datacriacao,
             'created_at'        => $dadosrequisicao[0]->created_at
         );
 
@@ -169,11 +181,18 @@ class CriativoController extends Controller
         $dadosrequisicao = json_decode($request->post('models'));
         $idlicenciado = json_decode($request->post('acesso'));
         settype($dadosrequisicao[0]->id, "string");
-    
+        
+        
+        $idTotem = $dadosrequisicao[0]->idtotem;
+        settype($idTotem, "string");
+        $dadostotem = Totem::find($idTotem);
+        $nSerieTotem = $dadostotem["n_serie"];
+        $dadosrequisicao[0]->nSerieTotem = $nSerieTotem;
 
 
         DB::beginTransaction();
         $dadoscliente = ClienteLicenciado::find($dadosrequisicao[0]->cliente);
+        $dadosrequisicao[0]->valtotal = $dadosrequisicao[0]->quantidade * $dadosrequisicao[0]->valunit;
 
         $criativoatualizado = DB::table('criativo')
             ->where("id", $dadosrequisicao[0]->id)
@@ -183,6 +202,8 @@ class CriativoController extends Controller
                 'quantidade'        => $dadosrequisicao[0]->quantidade,
                 'valunit'           => $dadosrequisicao[0]->valunit,
                 'valtotal'          => $dadosrequisicao[0]->valtotal,
+                'idtotem'           => $dadosrequisicao[0]->idtotem,
+                'datacriacao'       => $dadosrequisicao[0]->datacriacao,   
                 'idlicenciado'      => $idlicenciado,
                 'id_ult_alterador'  => $idlicenciado,
                 'updated_at'        => date("Y-m-d H:i:s")
@@ -207,6 +228,8 @@ class CriativoController extends Controller
             'quantidade'        => $dadosrequisicao[0]->quantidade,
             'valunit'           => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->valunit),
             'valtotal'          => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->valtotal),
+            'idtotem'           => $dadosrequisicao[0]->nSerieTotem,
+            'datacriacao'       => $dadosrequisicao[0]->datacriacao,
             'idlicenciado'      => $idlicenciado,
             'id_ult_alterador'  => $idlicenciado,
             'created_at'        => $dadosrequisicao[0]->created_at
@@ -220,9 +243,11 @@ class CriativoController extends Controller
         $criativo = new Criativo();
       
         $id = json_decode($request->post('id'));
+        $nSerieTotem = $request->get('totem');
+
         settype($id, "string");
         $dadoscriativo = Criativo::find($id);
-
+        $dadoscriativo->nSerieTotem = $nSerieTotem;
 
         DB::beginTransaction();
         $dadoscliente = ClienteLicenciado::find($dadoscriativo->cliente);

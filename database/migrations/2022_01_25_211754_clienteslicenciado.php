@@ -18,6 +18,7 @@ class Clienteslicenciado extends Migration
             $table->bigIncrements('id');
             $table->string('c_idlicenciado')->nullable();
             $table->string('c_nome')->nullable();
+            $table->string('c_cnpj')->nullable();
 
             $table->string('c_email')->nullable();
             $table->string('c_endereco')->nullable();

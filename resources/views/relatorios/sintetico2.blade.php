@@ -1,9 +1,14 @@
+<head>
+    <meta charset="utf-8">
+    <title>Sintético</title>
+</head>
 @extends('layouts.app')
 @section('content')
 
 @can('relatorio-sintetico')
+@php $periodomes = "datacriativo"; @endphp
 
-
+<label class="d-flex justify-content-center" style="color:red;" for="">Período Selecionado: @php echo date("d/m/Y", strtotime($dtinicial)) . " até " . date("d/m/Y", strtotime($dtfinal)); @endphp <a href="{{ route('sintetico2') }}" data-toggle="modal" data-target="#exampleModal">&nbsp;Selecionar outro período</a></label>
 <div class="container p-2" style="background-color:#b0b0b0; ">
     <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b> Relatório Sintético</b></h2>
 
@@ -16,9 +21,7 @@
                 dataSource = new kendo.data.DataSource({
                     transport: {
                         read: {
-                            url: "{{ route('relatoriosintetico') }}?acesso="
-                            <?php if (Auth::user()->id) : echo '+ ' . Auth::user()->id;
-                            endif; ?>,
+                            url: "{{ route('relatoriosintetico') }}?acesso=@if(Auth::user()->id){{Auth::user()->id}}@endif&dtinicial={{$dtinicial}}&dtfinal={{$dtfinal}}",
                             dataType: "json",
                             // headers: { 'Authorization': 'Bearer {{ $_COOKIE['gerenciamento_4uplay_session'] }}' },
                         },
@@ -58,9 +61,9 @@
                                         min: 1
                                     }
                                 },
-                                periodo: {
-                                    type: "string"
-                                },
+                                // datacriativo: {
+                                //     type: "date"
+                                // },
 
                                 // created_at: {
                                 //     type: "date",
@@ -88,7 +91,7 @@
                             width: "100px"
                         },
                         {
-                            field: "valtotal",
+                            field: "pvaltotal",
                             title: "Valor Total",
                             format: "{0:c}",
                             filterable: true,
@@ -100,17 +103,23 @@
                             width: "100px"
                         },
                         {
-                            field: "valfinal",
-                            title: "Valor Final",
+                            field: "cvaltotal",
+                            title: "Valor Total",
                             format: "{0:c}",
                             filterable: true,
                             width: "100px"
                         },
-                        {
-                            field: "datacriativo",
-                            title: "Período",
-                            width: "100px"
-                        },
+                        // {
+                        //     field: "datacriativo",
+                        //     title: "Período",
+                        //     width: "100px",
+                        //     format: "{0:dd/MM/yyyy}",
+                        //     filterable: {
+                        //         cell: {
+                        //             template: filtraMeses
+                        //         }
+                        //     }
+                        // },
                     ],
                     
                     editable: "inline"
@@ -125,7 +134,7 @@
             });
 
         
-        @include('layouts/filtradata')
+        @include('layouts/filtrames')
 
 
         </script>

@@ -1,36 +1,27 @@
+<head>
+    <meta charset="utf-8">
+    <title>Pipeline</title>
+</head>
+
 @extends('layouts.app')
 @section('content')
-<?php
-$permissaocriacao = "pipeline-create";
-?>
+
+@php $permissaocriacao = "pipeline-create"; @endphp
+
 <style>
-    .critical {
-        color: rgb(236, 51, 51) !important;
-    }
+    .critical { color: rgb(236, 51, 51) !important; }
 
-    .warning {
-        color: rgb(240, 174, 75) !important;
-    }
+    .warning { color: rgb(240, 174, 75) !important; }
 
-    .ok {
-        color: rgb(115, 171, 197) !important;
-    }
+    .ok { color: rgb(115, 171, 197) !important; }
 </style>
 
 
 @can('pipeline-list')
 
 
-{{-- 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> --}}
-
-
-
-<div class="container p-2" style="background-color:#b0b0b0; ">
-    <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b> Pipeline</b></h2>
+<div class="p-1" style="background-color:#b0b0b0; ">
+    <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b> Pipeline (anúncios)</b></h2>
 
     <div id="example">
         <div id="grid"></div>
@@ -126,7 +117,7 @@ $permissaocriacao = "pipeline-create";
                                     type: "number",
                                     validation: {
                                         required: true,
-                                        min: 0.01
+                                        min: 0.00
                                     }
                                 },
                                 @can('pipeline-delete')
@@ -139,18 +130,27 @@ $permissaocriacao = "pipeline-create";
                                     type: "number",
                                     validation: {
                                         required: true,
-                                        min: 0.01
+                                        min: 0.00
                                     }
                                 },
                                 negociacao: {
                                     type: "string",
                                     validation: {
-                                        required: true
+                                        required: true,
+                                        maxlength:"25",
                                     }
                                 },
                                 created_at: {
                                     type: "date",
-                                    editable: false
+                                    required: true
+                                },
+                                datainicial: {
+                                    type: "date",
+                                    required: true
+                                },
+                                datafinal: {
+                                    type: "date",
+                                    required: true
                                 },
                             }
                         }
@@ -163,21 +163,30 @@ $permissaocriacao = "pipeline-create";
                 @else
                 @include('layouts/customizacoestabela', ['permissaocriacao' => '0'])
                 @endcan
-
+                // filterable: true,
                     columns: [{
                             title: "Cliente",
                             field: "cliente",
                             filterable: true,
-                            width: "100px",
+                            width: "120px",
                             editor: listaClientes
 
                         },
                         {
+                            field: "n_serie",
+                            title: "Totem",
+                            filterable: true,
+                            width: "100px",
+                            editor: listaTotem
+                        },
+                        {
                             field: "qualificacao",
                             title: "Qualificação",
-                            // filterable: {
-                            //     cell: { template: qualificacaoFilter }
-                            // },
+                            filterable: {
+                                cell: {
+                                    template: qualificacaoFilter
+                                }
+                            },                       
                             width: "100px",
                             editor: categoryDropDownEditor
                         },
@@ -196,20 +205,20 @@ $permissaocriacao = "pipeline-create";
                         },
                         @endcan {
                             field: "negociacao",
-                            title: "Status Negociação",
+                            title: "Status<br>Negociação",
                             filterable: true,
                             width: "100px"
                         },
                         {
                             field: "fechamento",
-                            title: "Valor Fechamento",
+                            title: "Valor<br>Fechamento",
                             format: "{0:n}",
                             filterable: true,
                             width: "100px"
                         },
                         {
-                            field: "created_at",
-                            title: "Data Criação",
+                            field: "datainicial",
+                            title: "Data da<br>Proposta",
                             width: "160px",
                             format: "{0:dd/MM/yyyy}",
                             filterable: {
@@ -218,7 +227,17 @@ $permissaocriacao = "pipeline-create";
                                 }
                             }
                         },
-
+                        {
+                            field: "datafinal",
+                            title: "Data do<br>Encerramento",
+                            width: "160px",
+                            format: "{0:dd/MM/yyyy}",
+                            filterable: {
+                                cell: {
+                                    template: betweenFilterLocal
+                                }
+                            }
+                        },
                         {
                             command: [{
                                     name: "edit",
@@ -286,7 +305,11 @@ $permissaocriacao = "pipeline-create";
                                 }
                                 @endcan
                             ],
-                            width: 150,
+                            @can('pipeline-delete')
+                                width: 150,
+                            @else
+                                width: 80,
+                            @endcan
                             exportable: false,
                             title: "Ações",
                         },
@@ -305,6 +328,7 @@ $permissaocriacao = "pipeline-create";
                         for (var j = 0; j < rows.length; j++) {
                             var row = $(rows[j]);
                             var dataItem = e.sender.dataItem(row);
+                            console.log(dataItem);
                             var units = dataItem.get("qualificacao");
 
                             var cell = row.children().eq(columnIndex);
@@ -353,17 +377,17 @@ $permissaocriacao = "pipeline-create";
                     });
             }
 
-        @include('layouts/combolicenciado_clientes')
-        @include('layouts/filtradata')
+        @include('layouts/combos') 
+        @include('layouts/filtradatapipeline')
+        @include('layouts/filtraitenstabela')
+
 
         </script>
     </div>
-</div>
+ </div>
 
 @elsecan('pipeline-list')
 <h1>Acesso Não Autorizado</h1>
 @endcan
-
-
 
 @endsection

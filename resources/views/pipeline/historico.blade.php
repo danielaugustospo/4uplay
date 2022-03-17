@@ -1,5 +1,15 @@
+<head>
+    <meta charset="utf-8">
+    <title>Histórico Pipeline</title>
+</head>
 @extends('layouts.app')
 @section('content')
+
+<?php
+  $dataUm   = "h_dtoperacao";
+  $dataDois = "datainicial";
+  $dataTres = "datafinal";
+?>
     <style>
 
         .critical {
@@ -26,8 +36,8 @@
 @can('pipeline-historico')
 
 
-    <div class="container mt-1 p-2" style="background-color:#b0b0b0; ">
-        <h2>Histórico de Pipeline</h2>
+    <div class="p-1" style="background-color:#b0b0b0; ">
+        <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b>Histórico de Pipeline</b></h2>
 
         <div id="example">
             <div id="grid"></div>
@@ -107,6 +117,15 @@
                                         type: "date",
                                         editable: false
                                     },
+                                    datainicial: {
+                                        type: "date",
+                                        editable: false
+                                    },
+                                    datafinal: {
+                                        type: "date",
+                                        editable: false
+                                    },
+
                                 }
                             }
                         },
@@ -125,6 +144,12 @@
                             {
                                 field: "h_cliente",
                                 title: "Cliente",
+                                filterable: true,
+                                width: "105px"
+                            },
+                            {
+                                field: "h_idtotem",
+                                title: "Totem",
                                 filterable: true,
                                 width: "105px"
                             },
@@ -170,21 +195,44 @@
                             },
                             {
                                 field: "h_dt_proposta",
-                                title: "Dt Inicial",
-                                width: "120px",
+                                title: "Dt Proposta",
+                                width: "180px",
                                 format: "{0:dd/MM/yyyy}"
                             },
                             {
                                 field: "h_dtoperacao",
                                 title: "Dt Operação",
+                                width: "180px",
+                                format: "{0:dd/MM/yyyy}",
+                                filterable: {
+                                  cell: {
+                                    template: betweenFilter
+                                  }
+                                },
+                            },
+                            {
+                                field: "datainicial",
+                                title: "Dt Inicial",
+                                width: "180px",
+                                format: "{0:dd/MM/yyyy}",
+                                filterable: {
+                                  cell: {
+                                    template: betweenFilterDois
+                                  }
+                                }
+                            },
+                            {
+                                field: "datafinal",
+                                title: "Dt Final",
                                 width: "160px",
                                 format: "{0:dd/MM/yyyy}",
                                 filterable: {
                                 cell: {
-                                    template: betweenFilter
+                                    template: betweenFilterTres
+                                  }
                                 }
-                            }
                             },
+                            
 
 
                         ],
@@ -251,42 +299,10 @@
                 //     $('<input class="k-checkbox" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container);
                 // }
 
-                function betweenFilter(args) {
-    var filterCell = args.element.parents(".k-filtercell");
+                @include('layouts/filtradatadefault')
+                
 
-    filterCell.empty();
-    filterCell.html('<label style="width: 0px;">De: <input class="start-date"/></label>' + '<label class="pt-2"> <br><br> Até: ' + '<input  class="end-date"/></label>');
 
-    $(".start-date", filterCell).kendoDatePicker({
-        change: function (e) {
-            var startDate = e.sender.value(),
-                endDate = $("input.end-date", filterCell).data("kendoDatePicker").value(),
-                dataSource = $("#grid").data("kendoGrid").dataSource;
-
-            if (startDate & endDate) {
-                var filter = { logic: "and", filters: [] };
-                filter.filters.push({ field: "h_dtoperacao", operator: "gte", value: startDate });
-                filter.filters.push({ field: "h_dtoperacao", operator: "lte", value: endDate });
-                dataSource.filter(filter);
-            }
-        }
-    });
-    $(".end-date", filterCell).kendoDatePicker({
-        change: function (e) {
-            var startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
-                endDate = e.sender.value(),
-                dataSource = $("#grid").data("kendoGrid").dataSource;
-
-            if (startDate & endDate) {
-                var filter = { logic: "and", filters: [] };
-                filter.filters.push({ field: "h_dtoperacao", operator: "gte", value: startDate });
-                filter.filters.push({ field: "h_dtoperacao", operator: "lte", value: endDate });
-                dataSource.filter(filter);
-            }
-        }
-    });
-
-}
 
             </script>
         </div>

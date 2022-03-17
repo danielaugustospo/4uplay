@@ -68,10 +68,13 @@ class TotemController extends Controller
         $id_usr_criador = json_decode($request->post('acesso'));
 
         $permiteListagemCompleta = $this->verificaPermissao($id_usr_criador);
+
         if ($permiteListagemCompleta == 1) {
             $listaUsuarios = User::all();
+
             return $listaUsuarios;
         }
+
         
     }
 
@@ -83,7 +86,8 @@ class TotemController extends Controller
         $permiteListagemCompleta = 0;
         if (!empty($user->getRoleNames())) {
             foreach ($user->getRoleNames() as $v) {
-                if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
+
+                if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
                     $permiteListagemCompleta = 1;
                 }
             }
@@ -172,7 +176,8 @@ class TotemController extends Controller
                 $dadosrequisicao[0]->dtassociado = $criatotem->dtassociado;
                 
                 $tipo = 1;
-                DB::insert($totem->insereHistorico($dadosrequisicao, $id_usr_criador, $dadoscliente["c_nome"], $tipo));
+                $dadoscliente = 0;
+                DB::insert($totem->insereHistorico($dadosrequisicao, $dadosrequisicao[0]->licenciado->id, $dadoscliente, $tipo));
 
             } else {
                 DB::rollBack();
@@ -181,7 +186,7 @@ class TotemController extends Controller
 
             $arrayRetorno = array(
                 'id'                => $dadosrequisicao[0]->id,
-                'cliente'           => $dadoscliente->c_nome,
+                // 'cliente'           => $dadoscliente->c_nome,
                 // 'licenciado'        => $dadoscliente->name,
                 'licenciado'        => $dadosrequisicao[0]->licenciado->name,
                 'n_serie'           => $dadosrequisicao[0]->n_serie,
@@ -202,14 +207,26 @@ class TotemController extends Controller
         $dadosrequisicao = json_decode($request->post('models'));
         $id_ult_alterador = json_decode($request->post('acesso'));
         settype($dadosrequisicao[0]->id, "string");
+        settype($dadosrequisicao[0]->licenciado, "string");
         
         
         
         DB::beginTransaction();
-        
         $permiteListagemCompleta = $this->verificaPermissao($id_ult_alterador);
         if ($permiteListagemCompleta == 1) {
+            $verificaLocalizacaoTotemAntigo = DB::select("SELECT * FROM historico_totemcliente where h_idtotem ='".$dadosrequisicao[0]->n_serie."' order by id desc limit 1");
             
+            $dadoscliente = $dadosrequisicao[0]->licenciado;
+            // var_dump(sizeOf($verificaLocalizacaoTotemAntigo));
+            // exit;
+            if(sizeOf($verificaLocalizacaoTotemAntigo) > 0){
+            // $dadoscliente = ClienteLicenciado::find($dadosrequisicao[0]->cliente->id);
+            if ($verificaLocalizacaoTotemAntigo[0]->h_idcliente != $dadosrequisicao[0]->licenciado) {
+                DB::insert($totem->insereHistorico($dadosrequisicao, $verificaLocalizacaoTotemAntigo[0]->h_idcliente, $verificaLocalizacaoTotemAntigo[0]->h_totemassociado,  $tipo = 4));
+                DB::insert($totem->insereHistorico($dadosrequisicao, $dadosrequisicao[0]->licenciado, $cliente = 0, $tipo = 5));
+
+            }
+        }
             
             $totematualizado = DB::table('totem')
             ->where("id", $dadosrequisicao[0]->id)
@@ -220,18 +237,23 @@ class TotemController extends Controller
                 'dtassociado'        => date("Y-m-d H:i:s"),
                 'id_ult_alterador'   => $id_ult_alterador    
             ]);
-            
+            //Desassocia o totem antigo no histórico
+
             
         } elseif ($permiteListagemCompleta == 0) {
-            // var_dump( $dadosrequisicao[0]);
-            // exit;
+
             if(isset($dadosrequisicao[0]->cliente->id)):  
                 $idcliente = $dadosrequisicao[0]->cliente->id;
-                $nomecliente = $dadosrequisicao[0]->cliente->c_nome;
+                $dadoscliente = $dadosrequisicao[0]->cliente->c_nome;
+                
+                // var_dump($dadosrequisicao[0]);
+                // exit;
+
             else: 
                 $idcliente = $dadosrequisicao[0]->cliente; 
                 $dadoscliente = ClienteLicenciado::find($dadosrequisicao[0]->idcliente);
                 $nomecliente = $dadoscliente->c_nome;
+                $dadoscliente = $dadoscliente["c_nome"];
             endif;
             
             $totematualizado = DB::table('totem')
@@ -248,23 +270,23 @@ class TotemController extends Controller
                     // 'excluidototem'     => '0'
                     
                 ]);
+                DB::insert($totem->insereHistorico($dadosrequisicao, $id_ult_alterador, $dadoscliente, $tipo = 2));
+
             }
             
             
             
             if ($totematualizado) {
                 DB::commit();
-                $tipo = 2;
-                $dadoscliente = ClienteLicenciado::find($dadosrequisicao[0]->idcliente);
-                DB::insert($totem->insereHistorico($dadosrequisicao, $id_ult_alterador, $dadoscliente["c_nome"], $tipo));
-    
+                    
                 if($permiteListagemCompleta == 1 && $dadosrequisicao[0]->licenciado){
+
                         $licenciado = User::find($dadosrequisicao[0]->licenciado);
                         $cliente = '';
                         $arrayRetorno = array(
                             'id'                => $dadosrequisicao[0]->id,
                             // 'idcliente'         => $dadosrequisicao[0]->cliente,
-                            'idlicenciado'       => $dadosrequisicao[0]->idlicenciado,
+                            'idlicenciado'       => $dadosrequisicao[0]->licenciado,
                             'licenciado'         => $licenciado->name,
                             // 'idlicenciado'      => $dadosrequisicao[0]->idtotem,
                             'n_serie'           => $dadosrequisicao[0]->n_serie,
@@ -280,8 +302,8 @@ class TotemController extends Controller
                         $arrayRetorno = array(
                             'id'                => $dadosrequisicao[0]->id,
                             'idcliente'         => $idcliente,
-                            // 'cliente'           => $dadosrequisicao[0]->cliente->c_nome,
-                            'cliente'           => $nomecliente,
+                             'cliente'           => $dadosrequisicao[0]->cliente->c_nome,
+                            'cliente'           => $dadoscliente,
                             // 'idlicenciado'      => $dadosrequisicao[0]->idtotem,
                             'n_serie'           => $dadosrequisicao[0]->n_serie,
                             'dtassociado'       => $dadosrequisicao[0]->dtassociado,

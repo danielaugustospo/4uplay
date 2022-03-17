@@ -16,7 +16,8 @@ class Criativo extends Migration
 
         Schema::create('criativo', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('cliente')->nullable();;
+            $table->string('cliente')->nullable();
+            $table->string('idtotem')->nullable();;
             $table->string('tipocriativo')->nullable();
             $table->string('quantidade')->nullable();
             $table->string('valunit')->nullable();
@@ -24,6 +25,7 @@ class Criativo extends Migration
             $table->string('idlicenciado')->nullable();
             $table->string('id_ult_alterador')->nullable();
             $table->string('excluidocriativo')->nullable();
+            $table->string('datacriacao')->nullable();
             $table->timestamps();
         });
     }
