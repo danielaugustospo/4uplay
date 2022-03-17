@@ -53,7 +53,7 @@ class MensalidadeController extends Controller
         $permiteListagemCompleta = 0;
         if (!empty($user->getRoleNames())) {
             foreach ($user->getRoleNames() as $v) {
-                if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
+                if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
                     $permiteListagemCompleta = 1;
                 }
             }
@@ -66,7 +66,7 @@ class MensalidadeController extends Controller
             }
             return $dadosConsulta;
         } elseif ($permiteListagemCompleta == 0) {
-            return view('home.index');
+            return view('home');
         }
     }
 
@@ -81,7 +81,7 @@ class MensalidadeController extends Controller
         $permiteListagemCompleta = 0;
         if (!empty($user->getRoleNames())) {
             foreach ($user->getRoleNames() as $v) {
-                if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
+                if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
                     $permiteListagemCompleta = 1;
                 }
             }

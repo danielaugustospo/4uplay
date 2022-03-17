@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\AppServiceProvider;
 use App\ClienteLicenciado;
-
+use App\Totem;
 
 
 use App\User;
@@ -52,7 +52,7 @@ class PipelineController extends Controller
         $permiteListagemCompleta = 0;
         if(!empty($user->getRoleNames())){
                 foreach($user->getRoleNames() as $v){
-                    if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
+                    if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
                         $permiteListagemCompleta = 1;
                     }
                 }
@@ -83,7 +83,7 @@ class PipelineController extends Controller
         $permiteListagemCompleta = 0;
         if(!empty($user->getRoleNames())){
                 foreach($user->getRoleNames() as $v){
-                    if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
+                    if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')){
                         $permiteListagemCompleta = 1;
                     }
                 }
@@ -117,19 +117,23 @@ class PipelineController extends Controller
         $dadosrequisicao = json_decode($request->post('models'));
         $idlicenciado = json_decode($request->post('acesso'));
        
+        $idTotem = $dadosrequisicao[0]->n_serie->id;
+        settype($idTotem, "string");
 
-        
-        
         
         DB::beginTransaction();
         $dadoscliente = ClienteLicenciado::find($dadosrequisicao[0]->cliente);
 
+        // $dadostotem   = Totem::find($dadosrequisicao[0]->n_serie->id);
         $pipelineatualizado = Pipeline::create([
             'cliente'           => $dadosrequisicao[0]->cliente,
             'qualificacao'      => $dadosrequisicao[0]->qualificacao,
+            'idtotem'           => $idTotem,
             'proposta'          => $dadosrequisicao[0]->proposta,
             'fechamento'        => $dadosrequisicao[0]->fechamento,
             'negociacao'        => $dadosrequisicao[0]->negociacao,
+            'datainicial'       => $dadosrequisicao[0]->datainicial,
+            'datafinal'         => $dadosrequisicao[0]->datafinal,
             'idautor'           => $idlicenciado,
             'id_ult_alterador'  => $idlicenciado,
             'excluidopipeline'  => '0',
@@ -146,14 +150,18 @@ class PipelineController extends Controller
             DB::rollBack();
         }
 
-
+        $nSerieTotem = $dadosrequisicao[0]->n_serie->n_serie;
+        
         $arrayRetorno = array(
             'id'                => $pipelineatualizado->id,
             'cliente'           => $dadoscliente["c_nome"],
+            'n_serie'           => $nSerieTotem,
             'qualificacao'      => $dadosrequisicao[0]->qualificacao,
             'proposta'          => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->proposta),
             'fechamento'        => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->fechamento),
             'negociacao'        => $dadosrequisicao[0]->negociacao,
+            'datainicial'       => $dadosrequisicao[0]->datainicial,
+            'datafinal'         => $dadosrequisicao[0]->datafinal,
             'created_at'        => $dadosrequisicao[0]->created_at
         );
 
@@ -172,18 +180,27 @@ class PipelineController extends Controller
         $dadosrequisicao = json_decode($request->post('models'));
         $idlicenciado = json_decode($request->post('acesso'));
         settype($dadosrequisicao[0]->id, "string");
+
+        $idTotem = $dadosrequisicao[0]->n_serie;
+        settype($idTotem, "string");
     
         DB::beginTransaction();
         $dadoscliente = ClienteLicenciado::find($dadosrequisicao[0]->cliente);
+        $dadostotem = Totem::find($idTotem);
+        $nSerieTotem = $dadostotem["n_serie"];
+        $dadosrequisicao[0]->nSerieTotem = $nSerieTotem;
 
         $pipelineatualizado = DB::table('pipeline')
             ->where("id", $dadosrequisicao[0]->id)
             ->update([
                 'cliente'           => $dadosrequisicao[0]->cliente,
                 'qualificacao'      => $dadosrequisicao[0]->qualificacao,
+                'idtotem'           => $idTotem,
                 'proposta'          => $dadosrequisicao[0]->proposta,
                 'fechamento'        => $dadosrequisicao[0]->fechamento,
                 'negociacao'        => $dadosrequisicao[0]->negociacao,
+                'datainicial'       => $dadosrequisicao[0]->datainicial,
+                'datafinal'         => $dadosrequisicao[0]->datafinal,   
                 'id_ult_alterador'  => $idlicenciado,
                 'updated_at'        => date("Y-m-d H:i:s")
 
@@ -198,15 +215,17 @@ class PipelineController extends Controller
         }
 
 
-
         $arrayRetorno = array(
             'id'                => $dadosrequisicao[0]->id,
             // 'cliente'           => $dadosrequisicao[0]->cliente,
             'cliente'           => $dadoscliente["c_nome"],
+            'n_serie'           => $nSerieTotem,
             'qualificacao'      => $dadosrequisicao[0]->qualificacao,
             'proposta'          => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->proposta),
             'fechamento'        => FormatacoesServiceProvider::validaValoresParaView($dadosrequisicao[0]->fechamento),
             'negociacao'        => $dadosrequisicao[0]->negociacao,
+            'datainicial'       => $dadosrequisicao[0]->datainicial,
+            'datafinal'         => $dadosrequisicao[0]->datafinal,
             'created_at'        => $dadosrequisicao[0]->created_at
         );
         echo json_encode($arrayRetorno);

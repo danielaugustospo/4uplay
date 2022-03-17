@@ -16,7 +16,8 @@ class CriaTabelaPipeline extends Migration
 
         Schema::create('pipeline', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('cliente')->nullable();;
+            $table->string('cliente')->nullable();
+            $table->string('idtotem')->nullable();
             $table->string('qualificacao')->nullable();
             $table->string('proposta')->nullable();
             $table->string('negociacao')->nullable();
@@ -24,6 +25,8 @@ class CriaTabelaPipeline extends Migration
             $table->string('idautor')->nullable();
             $table->string('id_ult_alterador')->nullable();
             $table->string('excluidopipeline')->nullable();
+            $table->string('datainicial')->nullable();
+            $table->string('datafinal')->nullable();
             $table->timestamps();
         });
     }

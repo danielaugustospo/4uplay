@@ -24,12 +24,16 @@ class Pipeline extends Model
 
         'cliente',
         'qualificacao',
+        'idtotem',
+        'n_serie',
         'proposta',
         'fechamento',
         'negociacao',
         'idautor',
         'id_ult_alterador',
         'excluidopipeline',
+        'datainicial',
+        'datafinal',
 
     ];
 
@@ -38,11 +42,12 @@ class Pipeline extends Model
         $string = '';
         if($id){ $string .= ' AND u.id='.$id; }else { $string .= ''; }
 
-        $stringQuery = "SELECT p.*, u.name as 'licenciado', c.c_nome as 'cliente'
+        $stringQuery = "SELECT p.*, u.name as 'licenciado', t.n_serie, c.c_nome as 'cliente'
         from pipeline p
 
         left join users u on p.idautor = u.id 
         left join clienteslicenciado c on p.cliente = `c`.`id`
+        left join totem t on p.idtotem = `t`.`id`
 
         WHERE excluidopipeline = 0 " . $string ." GROUP BY id";
 
@@ -55,7 +60,8 @@ class Pipeline extends Model
         if($id): $string .= ' AND u.id='.$id; else : $string .= ''; endif;
 
         $stringQuery = "SELECT h.id, h_idpipeline, h_cliente, h_qualificacao, h_proposta, h_negociacao, h_fechamento, h_tipooperacao,
-        date_format(h_dt_proposta,'%Y-%m-%d')as h_dt_proposta, date_format(h_dtoperacao,'%Y-%m-%d')as h_dtoperacao, u.name as licenciado
+        date_format(h_dt_proposta,'%Y-%m-%d')as h_dt_proposta, date_format(h_dtoperacao,'%Y-%m-%d')as h_dtoperacao, u.name as licenciado,
+        date_format(h.datainicial,'%Y-%m-%d')as datainicial, date_format(h.datafinal,'%Y-%m-%d')as datafinal, h_idtotem
         
         from historicopipeline h, users u 
         where u.id = h_id_ult_alterador " . $string;
@@ -71,6 +77,7 @@ class Pipeline extends Model
             $campo_h_dt_proposta ='h_dt_proposta,';
             $criadoem = $dadosrequisicao[0]->created_at ."','";
             $idpipeline = $dadosrequisicao[0]->id;
+            $nSerieTotem = $dadosrequisicao[0]->n_serie->n_serie;
         }
 
         if($tipo == 2){
@@ -79,6 +86,8 @@ class Pipeline extends Model
             $campo_h_dt_proposta ='';
             $criadoem = "";
             $idpipeline = $dadosrequisicao[0]->id;
+            $nSerieTotem = $dadosrequisicao[0]->nSerieTotem;
+
         }
         
         if($tipo == 3){
@@ -90,15 +99,16 @@ class Pipeline extends Model
 
             
             $stringQuery = "INSERT INTO historicopipeline
-            (h_idpipeline, h_cliente, h_qualificacao, h_proposta, h_negociacao, h_fechamento, h_tipooperacao,". $campo_h_dt_proposta ."h_dtoperacao, h_id_ult_alterador)
-            VALUES('".$dadosrequisicao->id."', '".$nomecliente."', '".$dadosrequisicao->qualificacao."', '".$dadosrequisicao->proposta."', '".$dadosrequisicao->fechamento."', '".$dadosrequisicao->negociacao."', '".$tipooperacao."', '". $criadoem .$dataoperacao."', '".$dadosrequisicao->idautor."')";
+            (h_idpipeline, h_cliente, h_qualificacao, h_proposta, h_negociacao, h_fechamento, h_tipooperacao,". $campo_h_dt_proposta ."h_dtoperacao, h_id_ult_alterador, datainicial, datafinal, h_idtotem)
+            VALUES('".$dadosrequisicao->id."', '".$nomecliente."', '".$dadosrequisicao->qualificacao."', '".$dadosrequisicao->proposta."', '".$dadosrequisicao->fechamento."', '".$dadosrequisicao->negociacao."', '".$tipooperacao."', '". $criadoem .$dataoperacao."', '".$dadosrequisicao->idautor."', '". $dadosrequisicao->datainicial."', '". $dadosrequisicao->datafinal."','". $dadosrequisicao->h_idtotem ."')";
 
-        
             return $stringQuery;
         }
+        
             $stringQuery = "INSERT INTO historicopipeline
-            (h_idpipeline, h_cliente, h_qualificacao, h_proposta, h_negociacao, h_fechamento, h_tipooperacao,". $campo_h_dt_proposta ."h_dtoperacao, h_id_ult_alterador)
-            VALUES('".$idpipeline."', '".$nomecliente."', '".$dadosrequisicao[0]->qualificacao."', '".$dadosrequisicao[0]->proposta."', '".$dadosrequisicao[0]->fechamento."', '".$dadosrequisicao[0]->negociacao."', '".$tipooperacao."', '". $criadoem .$dataoperacao."', '".$idlicenciado."')";
+            (h_idpipeline, h_cliente, h_qualificacao, h_proposta, h_negociacao, h_fechamento, h_tipooperacao,". $campo_h_dt_proposta ."h_dtoperacao, h_id_ult_alterador, datainicial, datafinal, h_idtotem)
+            VALUES('".$idpipeline."', '".$nomecliente."', '".$dadosrequisicao[0]->qualificacao."', '".$dadosrequisicao[0]->proposta."', '".$dadosrequisicao[0]->fechamento."', '".$dadosrequisicao[0]->negociacao."', '".$tipooperacao."', '". $criadoem .$dataoperacao."', '".$idlicenciado."', '". $dadosrequisicao[0]->datainicial."', '". $dadosrequisicao[0]->datafinal."','". $nSerieTotem ."')";
+
 
         // if($tipo == 4){
         //     $tipooperacao = 'Visualização de Pipeline';

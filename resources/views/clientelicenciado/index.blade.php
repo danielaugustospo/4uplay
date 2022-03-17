@@ -26,7 +26,7 @@
 
 
 <div class="container p-2" style="background-color:#b0b0b0; ">
-    <h1 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b>Meus Clientes</b></h1>
+    <h1 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b>@if ($permiteListagemCompleta == 0)Meus @endif Clientes</b></h1>
     <div id="example">
         <div id="grid"></div>
 
@@ -107,11 +107,21 @@
                                         required: true
                                     }
                                 },
+                                name: {
+                                    type: "string",
+                                    editable: false
 
+                                },
                                 c_nome: {
                                     type: "string",
                                     validation: {
                                         required: true
+                                    }
+                                },
+                                c_cnpj: {
+                                    type: "string",
+                                    validation: {
+                                        required: true, maxlength:"14"
                                     }
                                 },
                                 c_email: {
@@ -146,10 +156,10 @@
                                     }
                                 },
 
-                                // dtassociado: {
-                                //     type: "date",
-                                //     editable: false
-                                // },
+                                created_at: {
+                                    type: "date",
+                                    editable: false
+                                },
                             }
                         }
                     },
@@ -162,24 +172,29 @@
                 @include('layouts/customizacoestabela', ['permissaocriacao' => '0'])
                 @endcan
                     columns: [
-                        { field: "c_nome", title: "Nome", filterable: true, width: "200px" },
-                        { field: "c_email", title: "Email", filterable: true, width: "200px" },
-                        { field: "c_endereco", title: "Endereço", filterable: true, width: "200px" },
-                        { field: "c_telefone", title: "Telefone", filterable: true, width: "200px"},
-                        { field: "c_estado", title: "Estado", filterable: true, width: "100px" },
-                        { field: "c_municipio", title: "Município", filterable: true, width: "150px" },
+                        { field: "c_nome", title: "Nome/Rz. Social", filterable: true, width: "100px" },
+                        @if ($permiteListagemCompleta == 1)
+                            { field: "name", title: "Licenciado", filterable: true, width: "100px"},
+                        @endif
+                        { field: "c_cnpj", title: "CNPJ", filterable: true, editor: ajustaCNPJ, width: "100px" },
+                        { field: "c_email", title: "Email", filterable: true, width: "100px" },
+                        { field: "c_endereco", title: "Endereço", filterable: true, width: "100px" },
+                        { field: "c_telefone", title: "Telefone", filterable: true, editor: ajustaTelefone, width: "80px"},
+                        { field: "c_estado", title: "Estado", filterable: true, width: "70px" },
+                        { field: "c_municipio", title: "Município", filterable: true, width: "70px" },
+                        // { field: "created_at", title: "Data Cadastro", filterable: true, width: "150px" },
 
-                        // {
-                        //     field: "created_at",
-                        //     title: "Criado Em",
-                        //     width: "160px",
-                        //     format: "{0:dd/MM/yyyy}",
-                        //     filterable: {
-                        //         cell: {
-                        //             template: betweenFilter
-                        //         }
-                        //     }
-                        // },
+                        {
+                            field: "created_at",
+                            title: "Data Cadastro",
+                            width: "160px",
+                            format: "{0:dd/MM/yyyy}",
+                            filterable: {
+                                cell: {
+                                    template: betweenFilter
+                                }
+                            }
+                        },
 
                         {
                             command: [{
@@ -256,6 +271,7 @@
 
                     editable: "popup"
                 });
+                
 
                 function recarrega() {
                     $('#grid').data('kendoGrid').dataSource.read();
@@ -269,6 +285,23 @@
             @include('layouts/filtradata')
 
 
+            function ajustaCNPJ(container, options) {
+                $('<input id="c_cnpj" data-text-field="c_cnpj" data-value-field="c_cnpj" data-bind="value:' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoMaskedTextBox({
+                        mask: "00,000,000/0000-00",
+                        value: options.model.c_cnpj
+                    });
+                }
+
+            function ajustaTelefone(container, options) {
+                $('<input id="c_cnpj" data-text-field="c_cnpj" data-value-field="c_cnpj" data-bind="value:' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoMaskedTextBox({
+                        mask: "(00)90000-0000",
+                        value: options.model.c_cnpj
+                    });
+                }
 
 
         </script>

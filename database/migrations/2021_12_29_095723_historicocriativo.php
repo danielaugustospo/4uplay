@@ -16,8 +16,9 @@ class Historicocriativo extends Migration
 
         Schema::create('historicocriativo', function (Blueprint $table) {
             $table->bigIncrements('hc_id');
-            $table->string('hc_idcriativo')->nullable();;
-            $table->string('hc_cliente')->nullable();;
+            $table->string('hc_idcriativo')->nullable();
+            $table->string('hc_idtotem')->nullable();
+            $table->string('hc_cliente')->nullable();
             $table->string('hc_tipocriativo')->nullable();
             $table->string('hc_quantidade')->nullable();
             $table->string('hc_valunit')->nullable();
@@ -25,7 +26,7 @@ class Historicocriativo extends Migration
             $table->string('hc_tipooperacao')->nullable();
             $table->string('hc_idlicenciado')->nullable();
             $table->string('hc_id_ult_alterador')->nullable();
-            $table->string('hc_datacricao')->nullable();
+            $table->string('hc_datacriacao')->nullable();
             $table->string('hc_dataalteracao')->nullable();
 
         });

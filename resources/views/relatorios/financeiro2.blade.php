@@ -1,3 +1,7 @@
+<head>
+    <meta charset="utf-8">
+    <title>Financeiro</title>
+</head>
 @extends('layouts.app')
 @section('content')
 <style>
@@ -22,7 +26,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-
+<label class="d-flex justify-content-center" style="color:red;" for="">Período Selecionado: @php echo date("d/m/Y", strtotime($dtinicial)) . " até " . date("d/m/Y", strtotime($dtfinal)); @endphp <a href="{{ route('financeiro2') }}" data-toggle="modal" data-target="#exampleModal">&nbsp;Selecionar outro período</a></label>
 <div class="container p-2" style="background-color:#b0b0b0; ">
     <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b> Relatório Financeiro</b></h2>
 
@@ -35,9 +39,8 @@
                 dataSource = new kendo.data.DataSource({
                     transport: {
                         read: {
-                            url: "{{ route('relatoriofinanceiro') }}?acesso="
-                            <?php if (Auth::user()->id) : echo '+ ' . Auth::user()->id;
-                            endif; ?>,
+                            // url: "{{ route('relatoriofinanceiro') }}?acesso="<?php if (Auth::user()->id) : echo '+ ' . Auth::user()->id; endif; ?>,
+                            url: "{{ route('relatoriofinanceiro') }}?acesso=@if(Auth::user()->id){{Auth::user()->id}}@endif&dtinicial={{$dtinicial}}&dtfinal={{$dtfinal}}",
                             dataType: "json",
                             // headers: { 'Authorization': 'Bearer {{ $_COOKIE['gerenciamento_4uplay_session'] }}' },
                         },
@@ -72,14 +75,14 @@
                                         min: 1
                                     }
                                 },
-                                periodo: {
-                                    type: "string"
-                                },
+                                // periodo: {
+                                //     type: "string"
+                                // },
 
-                                created_at: {
-                                    type: "date",
-                                    editable: false
-                                },
+                                // created_at: {
+                                //     type: "date",
+                                //     editable: false
+                                // },
                             }
                         }
                     },
@@ -109,12 +112,7 @@
                             width: "100px",
                             format: "{0:c}",
                         },
-                        {
-                            field: "fechamento",
-                            title: "Fechamento Royalties - Testar",
-                            width: "100px",
-                            format: "{0:c}",
-                        },
+
                         {
                             field: "valorcriativo",
                             title: "Valor Criativo",
@@ -122,11 +120,11 @@
                             filterable: true,
                             width: "100px"
                         },
-                        {
-                            field: "datacriativo",
-                            title: "Período",
-                            width: "100px"
-                        },
+                        // {
+                        //     field: "datacriativo",
+                        //     title: "Período",
+                        //     width: "100px"
+                        // },
                         // {
                         //     field: "created_at",
                         //     title: "Data Criação",

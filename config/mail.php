@@ -56,7 +56,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'suporte.danieltecnologia@gmail.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'suporte@4uplay.com.br'),
         'name' => env('MAIL_FROM_NAME', '4UPLAY'),
     ],
 
@@ -84,9 +84,9 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME', 'suporte.danieltecnologia@gmail.com'),
+    'username' => env('MAIL_USERNAME', 'suporte@4uplay.com.br'),
 
-    'password' => env('MAIL_PASSWORD', '8523654*da'),
+    'password' => env('MAIL_PASSWORD', ''),
 
     /*
     |--------------------------------------------------------------------------

@@ -24,37 +24,37 @@ $("#grid").kendoGrid({
 
         var sheet = e.workbook.sheets[0];
         sheet.frozenRows = 1;
-        sheet.mergedCells = ["A1:H1"];
+        sheet.mergedCells = ["A1:I1"];
         sheet.name = "Relatorio de " + document.title + " -  4UPLAY";
 
         var myHeaders = [{
-            value: "Relatório de " + document.title,
+            value: "4UPLAY - Relatório de " + document.title,
             textAlign: "center",
-            background: "black",
-            color: "#ffffff"
+            background: "#8A2BE2",
+            color: "#FAC910"
         }];
 
         sheet.rows.splice(0, 0, {
             cells: myHeaders,
             type: "header",
-            height: 70
+            height: 30
         });
     },
 
     pdf: {
-        fileName: "Relatório de " + document.title + ".pdf",
+        fileName: "Rel. de " + document.title + ".pdf",
 
         allPages: true,
         avoidLinks: true,
         paperSize: "A4",
         margin: {
-            top: "2cm",
-            left: "1cm",
-            right: "1cm",
+            top: "2.5cm",
+            left: "0.2cm",
+            right: "0.2cm",
             bottom: "1cm"
         },
         landscape: true,
-        repeatHeaders: true,
+        repeatHeaders: false,
         template: $("#page-template").html(),
         scale: 0.8
     },
@@ -72,7 +72,7 @@ $("#grid").kendoGrid({
     columnMenu: true,
 
     filterable: {
-        extra: false,
+        extra: true,
         mode: "row"
     },
     pageable: {

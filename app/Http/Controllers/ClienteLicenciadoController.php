@@ -40,7 +40,18 @@ class ClienteLicenciadoController extends Controller
 
         $id_usr_criador = Auth::id();
 
-        return view('clientelicenciado.index', compact('id_usr_criador'));
+        $user = User::find($id_usr_criador);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
+        $permiteListagemCompleta = 0;
+        if (!empty($user->getRoleNames())) {
+            foreach ($user->getRoleNames() as $v) {
+                if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
+                    $permiteListagemCompleta = 1;
+                }
+            }
+        }
+        return view('clientelicenciado.index', compact('id_usr_criador', 'permiteListagemCompleta'));
     }
 
 
@@ -55,7 +66,7 @@ class ClienteLicenciadoController extends Controller
         $permiteListagemCompleta = 0;
         if (!empty($user->getRoleNames())) {
             foreach ($user->getRoleNames() as $v) {
-                if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
+                if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
                     $permiteListagemCompleta = 1;
                 }
             }
@@ -85,7 +96,7 @@ class ClienteLicenciadoController extends Controller
         $permiteListagemCompleta = 0;
         if (!empty($user->getRoleNames())) {
             foreach ($user->getRoleNames() as $v) {
-                if (($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
+                if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
                     $permiteListagemCompleta = 1;
                 }
             }
@@ -129,6 +140,7 @@ class ClienteLicenciadoController extends Controller
 
             $criaclientelicenciado = ClienteLicenciado::create([
                 'c_nome'            => $dadosrequisicao[0]->c_nome,
+                'c_cnpj'            => $dadosrequisicao[0]->c_cnpj,
                 'c_email'           => $dadosrequisicao[0]->c_email,
                 'c_endereco'        => $dadosrequisicao[0]->c_endereco,
                 'c_telefone'        => $dadosrequisicao[0]->c_telefone,
@@ -156,6 +168,7 @@ class ClienteLicenciadoController extends Controller
             $arrayRetorno = array(
                 'id'                => $dadosrequisicao[0]->id,
                 'c_nome'            => $dadosrequisicao[0]->c_nome,
+                'c_cnpj'            => $dadosrequisicao[0]->c_cnpj,
                 'c_email'           => $dadosrequisicao[0]->c_email,
                 'c_endereco'        => $dadosrequisicao[0]->c_endereco,
                 'c_telefone'        => $dadosrequisicao[0]->c_telefone,
@@ -191,6 +204,7 @@ class ClienteLicenciadoController extends Controller
             ->where("id", $dadosrequisicao[0]->id)
             ->update([
                 'c_nome'            => $dadosrequisicao[0]->c_nome,
+                'c_cnpj'           => $dadosrequisicao[0]->c_cnpj,
                 'c_email'           => $dadosrequisicao[0]->c_email,
                 'c_endereco'        => $dadosrequisicao[0]->c_endereco,
                 'c_telefone'        => $dadosrequisicao[0]->c_telefone,
@@ -216,6 +230,7 @@ class ClienteLicenciadoController extends Controller
 
             'id'                => $dadosrequisicao[0]->id,
             'c_nome'            => $dadosrequisicao[0]->c_nome,
+            'c_cnpj'            => $dadosrequisicao[0]->c_cnpj,
             'c_email'           => $dadosrequisicao[0]->c_email,
             'c_endereco'        => $dadosrequisicao[0]->c_endereco,
             'c_telefone'        => $dadosrequisicao[0]->c_telefone,
@@ -249,6 +264,18 @@ class ClienteLicenciadoController extends Controller
         }         
         if($verificaclientelicenciado) {
 
+            $user = User::find($id_usr_criador);
+            $roles = Role::pluck('name', 'name')->all();
+            $userRole = $user->roles->pluck('name', 'name')->all();
+            $permiteListagemCompleta = 0;
+            if (!empty($user->getRoleNames())) {
+                foreach ($user->getRoleNames() as $v) {
+                    if (($v == 'Admin') || ($v == 'Administrador') || ($v == 'DESENVOLVIMENTO')) {
+                        $permiteListagemCompleta = 1;
+                    }
+                }
+            }
+    
         DB::beginTransaction();
 
         $clientelicenciadoatualizado = DB::table('clienteslicenciado')

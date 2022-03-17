@@ -53,6 +53,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/totem', 'TotemController@index')->name('totem');
     Route::get('/clientelicenciado', 'ClienteLicenciadoController@index')->name('clientelicenciado');
     
+    Route::get('alterasenha', 'AlteraSenhaController@index')->name('alterasenha');
+    Route::post('trocarsenha', 'AlteraSenhaController@store')->name('trocarsenha');
+    
 });
 
 

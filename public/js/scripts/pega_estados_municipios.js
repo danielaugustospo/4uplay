@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var url_base = window.location.host;
-    $.getJSON('https://'+ url_base +'/sistemas/homolog/4uplay/public/js/scripts/estados_cidades.json', function (data) {
+    $.getJSON('/gestor4uplay/public/js/scripts/estados_cidades.json', function (data) {
 
         var items = [];
         var options = '<option value="">Selecione um estado</option>';
