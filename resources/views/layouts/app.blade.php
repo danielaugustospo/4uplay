@@ -1,6 +1,6 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <meta charset="utf-8">
+    {{-- <meta charset="utf-8"> --}}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
@@ -10,22 +10,17 @@
     {{-- <script src="{{ asset('js/app.js') }}" defer></script> --}}
     
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+    {{-- <link rel="dns-prefetch" href="https://fonts.gstatic.com"> --}}
+    {{-- <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css"> --}}
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.default-main.min.css" />
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
     
-
-    <style>
-        td, span { font-size: 11; }
-        .k-grid-header .k-header>.k-link { font-size: 11; }
-    </style>
-
     
     @include('layouts/scripts')
+
     {{-- @include('layouts/include') --}}
     @include('layouts/estilo')
 </head>
@@ -186,39 +181,3 @@
   </div>
 </body>
 </html>
-    <style>
-        /* Page Template for the exported PDF */
-        .page-template {
-          font-family: "DejaVu Sans", "Arial", sans-serif;
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-        }
-        .page-template .header {
-          position: absolute;
-          top: 30px;
-          left: 30px;
-          right: 30px;
-          border-bottom: 1px solid #888;
-          color: #888;
-        }
-        .page-template .footer {
-          position: absolute;
-          bottom: 30px;
-          left: 30px;
-          right: 30px;
-          border-top: 1px solid #888;
-          text-align: center;
-          color: #888;
-        }
-        .page-template .watermark {
-          font-weight: bold;
-          font-size: 400%;
-          text-align: center;
-          margin-top: 30%;
-          color: #aaaaaa;
-          opacity: 0.1;
-          transform: rotate(-35deg) scale(1.7, 1.5);
-        }

@@ -42,10 +42,10 @@ $("#grid").kendoGrid({
     },
 
     pdf: {
-        fileName: "Rel. de " + document.title + ".pdf",
+        fileName: "Rel_de_" + document.title + ".pdf",
 
         allPages: true,
-        avoidLinks: true,
+        avoidLinks: false,
         paperSize: "A4",
         margin: {
             top: "2.5cm",
@@ -53,7 +53,7 @@ $("#grid").kendoGrid({
             right: "0.2cm",
             bottom: "1cm"
         },
-        landscape: true,
+        landscape: false,
         repeatHeaders: false,
         template: $("#page-template").html(),
         scale: 0.8

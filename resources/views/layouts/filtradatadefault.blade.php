@@ -4,7 +4,7 @@ function betweenFilter(args) {
     var filterCell = args.element.parents(".k-filtercell");
 
     filterCell.empty();
-    filterCell.html('<label style="width: 0px;">De: <input class="start-date"/></label>' + '<label class="pt-2"> <br><br> Até: ' + '<input  class="end-date"/></label>');
+    filterCell.html('<label style="width: 0px;">De: <input class="start-date"/></label>' + '<label class="pt-4"> <br><br> Até: ' + '<input  class="end-date"/></label>');
 
     $(".start-date", filterCell).kendoDatePicker({
         change: function (e) {

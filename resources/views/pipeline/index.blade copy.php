@@ -163,17 +163,11 @@
                 @else
                 @include('layouts/customizacoestabela', ['permissaocriacao' => '0'])
                 @endcan
-
+                // filterable: true,
                     columns: [{
                             title: "Cliente",
                             field: "cliente",
-                            filterable: {
-                               
-                                cell: {
-                                    template: filtraClientePipeline
-                                },
-                                
-                            },
+                            filterable: true,
                             width: "120px",
                             editor: listaClientes
 
@@ -181,11 +175,7 @@
                         {
                             field: "n_serie",
                             title: "Totem",
-                            filterable: {
-                                cell: {
-                                    template: filtraTotemPipeline
-                                }
-                            },  
+                            filterable: true,
                             width: "100px",
                             editor: listaTotem
                         },
@@ -197,7 +187,6 @@
                                     template: qualificacaoFilter
                                 }
                             },                       
-                     
                             width: "100px",
                             editor: categoryDropDownEditor
                         },
