@@ -2,7 +2,7 @@ function betweenFilter(args) {
     var filterCell = args.element.parents(".k-filtercell");
 
     filterCell.empty();
-    filterCell.html('<label style="width: 0px;">De: <input class="start-date" style="width: 130px;"/></label>' + '<label class="pt-2"> <br><br> Até: ' + '<input  class="end-date" style="width: 130px;"/></label>');
+    filterCell.html('<label style="width: 0px;">De: <input class="start-date" style="width: 130px;"/></label>' + '<label class="pt-4"> <br><br> Até: ' + '<input  class="end-date" style="width: 130px;"/></label>');
 
     $(".start-date", filterCell).kendoDatePicker({
         change: function (e) {
@@ -40,7 +40,7 @@ function betweenFilterLocal(args) {
     var filterCell = args.element.parents(".k-filtercell");
 
     filterCell.empty();
-    filterCell.html('<label style="width: 0px;">De: <input class="start-dateEncerramento" style="width: 130px;"/></label><label class="pt-2"> <br><br> Até: ' + '<input  class="end-dateEncerramento" style="width: 130px;"/></label>');
+    filterCell.html('<label style="width: 0px;">De: <input class="start-dateEncerramento" style="width: 130px;"/></label><label class="pt-4"> <br><br> Até: ' + '<input  class="end-dateEncerramento" style="width: 130px;"/></label>');
 
     $(".start-dateEncerramento", filterCell).kendoDatePicker({
         change: function (e) {
