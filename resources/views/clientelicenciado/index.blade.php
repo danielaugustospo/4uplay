@@ -13,22 +13,16 @@
         color: rgb(115, 171, 197) !important;
     }
 
-    td {
-        font-size: 13;
-    }
-
-    .k-grid-header .k-header>.k-link {
-        font-size: 13;
-    }
 </style>
 
 @can('clienteslicenciado-list')
 
 
-<div class="container p-2" style="background-color:#b0b0b0; ">
-    <h1 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b>@if ($permiteListagemCompleta == 0)Meus @endif Clientes</b></h1>
-    <div id="example">
-        <div id="grid"></div>
+        <div class="p-1" style="background-color:#b0b0b0; ">
+            <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b> @if ($permiteListagemCompleta == 0)Meus @endif Clientes</b></h2>
+        
+            <div id="example">
+                <div id="grid"></div>           
 
         <script>
             function getUnitsInStockClass(units) {

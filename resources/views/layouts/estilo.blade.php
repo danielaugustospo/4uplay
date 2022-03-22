@@ -3,12 +3,16 @@
       Use the DejaVu Sans font for display and embedding in the PDF file.
       The standard PDF fonts have no support for Unicode characters.
   */
-  .k-grid, .k-column-title, td, th {
+  .k-grid, .k-column-title, td, th, span {
       font-family: "DejaVu Sans", "Arial", sans-serif;
-      font-size: 11px;
+      font-size: 10px;
   }
 
 
+
+    .k-item, .k-pager-wrap, .k-grid-pager, .k-widget, .k-floatwrap, .k-grid-header .k-header>.k-link {
+        font-size: 10px;
+    }
 
     /* Page Template for the exported PDF */
     .page-template {

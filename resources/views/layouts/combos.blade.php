@@ -13,6 +13,7 @@ function listaLicenciadoEClientes(container, options) {
         // dataSource: data,
         dataTextField:  licenciadoOuCliente,
         dataValueField: 'id',
+        filter: "contains",
         dataSource: {
             transport: {
                 read: {
@@ -38,6 +39,7 @@ function listaClientes(container, options) {
         // dataSource: data,
         dataTextField:  licenciadoOuCliente,
         dataValueField: 'id',
+        filter: "contains",
         dataSource: {
             transport: {
                 read: {
@@ -54,14 +56,15 @@ function listaClientes(container, options) {
 function listaTotem(container, options) {
                 
 
-                var licenciadoOuCliente = 'c_nome';
-                var rota = "{{ route('listatotem') }}" ;
+            var licenciadoOuCliente = 'c_nome';
+            var rota = "{{ route('listatotem') }}" ;
             $('<input required name="' + options.field + '"/>')
             .appendTo(container)
             .kendoDropDownList({
                 // dataSource: data,
                 dataTextField:  'n_serie',
                 dataValueField: 'id',
+                filter: "contains",
                 dataSource: {
                     transport: {
                         read: {

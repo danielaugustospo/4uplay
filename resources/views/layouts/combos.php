@@ -13,6 +13,7 @@ function listaLicenciadoEClientes(container, options) {
         // dataSource: data,
         dataTextField:  licenciadoOuCliente,
         dataValueField: 'id',
+        filter: "contains",
         dataSource: {
             transport: {
                 read: {
@@ -38,6 +39,7 @@ function listaClientes(container, options) {
         // dataSource: data,
         dataTextField:  licenciadoOuCliente,
         dataValueField: 'id',
+        filter: "contains",
         dataSource: {
             transport: {
                 read: {
@@ -62,6 +64,7 @@ function listaTotem(container, options) {
                 // dataSource: data,
                 dataTextField:  'n_serie',
                 dataValueField: 'id',
+                filter: "contains",
                 dataSource: {
                     transport: {
                         read: {

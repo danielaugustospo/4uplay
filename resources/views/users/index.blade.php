@@ -19,7 +19,7 @@
     {{-- @can('usuarios-list') --}}
 
 
-    <div class="pull-right">
+    <div class="container p-2">
       <a class="btn btn-success" style="background-color: #8A2BE2 !important; border-color: #8A2BE2 !important;" href="{{ route('users.create') }}"> Cadastrar Usuário</a>
     </div>
         <div class="container p-2" style="background-color:#b0b0b0; ">

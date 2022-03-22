@@ -168,11 +168,9 @@
                             title: "Cliente",
                             field: "cliente",
                             filterable: {
-                               
                                 cell: {
                                     template: filtraClientePipeline
                                 },
-                                
                             },
                             width: "120px",
                             editor: listaClientes

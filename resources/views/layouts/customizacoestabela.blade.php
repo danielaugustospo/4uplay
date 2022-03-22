@@ -53,7 +53,11 @@ $("#grid").kendoGrid({
             right: "0.2cm",
             bottom: "1cm"
         },
-        landscape: false,
+        @isset($orientacao)
+            landscape: false,
+        @else
+            landscape: true,
+        @endisset
         repeatHeaders: false,
         template: $("#page-template").html(),
         scale: 0.8

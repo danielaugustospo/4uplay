@@ -17,22 +17,16 @@ $dataUm = "datacriacao";
         color: rgb(115, 171, 197) !important;
     }
 
-    td {
-        font-size: 13;
-    }
-
-    .k-grid-header .k-header>.k-link {
-        font-size: 13;
-    }
 </style>
 
 @can('criativo-list')
 
 
-<div class="container p-2" style="background-color:#b0b0b0; ">
-    <h1 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b>Criativo</b></h1>
-    <div id="example">
-        <div id="grid"></div>
+        <div class="p-1" style="background-color:#b0b0b0; ">
+            <h2 class="pt-2 pb-2 text-center" style="font-family: system-ui;"><b> Criativo</b></h2>
+        
+            <div id="example">
+                <div id="grid"></div>        
 
         <script>
             function getUnitsInStockClass(units) {
@@ -185,7 +179,11 @@ $dataUm = "datacriacao";
                         {
                             title: "Cliente",
                             field: "cliente",
-                            filterable: true,
+                            filterable: {
+                                cell: {
+                                    template: filtraClientePipeline
+                                },
+                            },                            
                             width: "100px",
                             editor: listaClientes
                             
@@ -193,7 +191,11 @@ $dataUm = "datacriacao";
                         {
                             field: "idtotem",
                             title: "Totem",
-                            filterable: true,
+                            filterable: {
+                                cell: {
+                                    template: filtraTotemPipeline
+                                }
+                            },                            
                             width: "100px",
                             editor: listaTotem
 
@@ -380,6 +382,7 @@ $dataUm = "datacriacao";
 
                 @include('layouts/combos')
                 @include('layouts/filtradatadefault')    
+                @include('layouts/filtraitenstabela')
 
             // function customBoolEditor(container, options) {
             //     $('<input class="k-checkbox" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container);

@@ -9,6 +9,7 @@ function listaTotem(container, options) {
         // dataSource: data,
         dataTextField:  'n_serie',
         dataValueField: 'id',
+        filter: "contains",
         dataSource: {
             transport: {
                 read: {
