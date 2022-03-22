@@ -24,13 +24,6 @@
             color: rgb(115, 171, 197) !important;
         }
 
-        td{
-            font-size: 13;
-        }
-        .k-grid-header .k-header>.k-link {
-            font-size: 13;
-        }
-
     </style>
     
 @can('pipeline-historico')

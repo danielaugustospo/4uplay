@@ -7,7 +7,7 @@
 {{ Html::script('js/scripts/exibe_senha.js') }}
 
 <div class="row">
-    <div class="col-lg-12 margin-tb">
+    <div class="container mt-2 pl-3">
         <div class="pull-left">
             <h2>Cadastrar Novo Usuário</h2>
         </div>
